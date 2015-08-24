@@ -22,11 +22,27 @@ import org.junit.Test;
 
 public class KubernetesProducerTest extends CamelTestSupport {
 
+    private String username;
+    private String password;
+    private String host;
+    
+    @Override
+    public void setUp() throws Exception {
+        // INSERT credentials and host here
+        username = "admin";
+        password = "admin";
+        host = "https://172.28.128.4:8443";
+        super.setUp();
+    }
+    
     @Test
-    public void ListTest() throws Exception {
-        String p = template.requestBody("direct:test", "", String.class);
+    public void listTest() throws Exception {
+    	if (username == null) {
+    		return;
+    	}
+        String result = template.requestBody("direct:list", "", String.class);
         
-        System.err.println(p);
+        assertTrue(result.contains("default"));
     }
     
 	@Override
@@ -35,7 +51,7 @@ public class KubernetesProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .to("kubernetes://https://172.28.128.4:8443?category=namespaces&operation=list");
+                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=list",host,username,password);
             } 
         };
     }
