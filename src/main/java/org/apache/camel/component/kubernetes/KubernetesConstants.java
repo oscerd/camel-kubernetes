@@ -20,4 +20,7 @@ public interface KubernetesConstants {
     String KUBERNETES_OPERATION = "CamelKubernetesOperation";
     String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";
     String KUBERNETES_NAMESPACE_LABELS = "CamelKubernetesNamespaceLabels";
+    String KUBERNETES_SERVICE_LABELS = "CamelKubernetesServiceLabels";
+    String KUBERNETES_SERVICE_NAME = "CamelKubernetesServiceName";
+    String KUBERNETES_SERVICE_SPEC = "CamelKubernetesServiceSpec";
 }

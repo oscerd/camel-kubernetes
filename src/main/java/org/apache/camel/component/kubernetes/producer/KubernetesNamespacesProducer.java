@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.Map;
-
+import io.fabric8.kubernetes.api.model.DoneableNamespace;
 import io.fabric8.kubernetes.api.model.EditableNamespace;
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceList;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.ClientResource;
+
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -50,6 +54,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 	@Override
 	public void process(Exchange exchange) throws Exception {
         String operation;
+        
         if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
             operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
@@ -79,7 +84,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             break;
                 
         default:
-            throw new IllegalArgumentException("Local path must specified to execute " + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
 	}
 	
@@ -94,15 +99,21 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
     		LOG.error("Get a specific namespace by labels require specify a labels set");
     		throw new IllegalArgumentException("Get a specific namespace by labels require specify a labels set");
     	}
-    	NamespaceList namespace = getEndpoint().getKubernetesClient().namespaces().withLabels(labels).list();
+    	ClientNonNamespaceOperation<KubernetesClient, Namespace, NamespaceList, DoneableNamespace, ClientResource<Namespace, DoneableNamespace>> namespaces;
+    	namespaces = getEndpoint().getKubernetesClient().namespaces();
+		for (Map.Entry<String, String> entry : labels.entrySet())
+		{
+		    namespaces.withLabel(entry.getKey(), entry.getValue());
+		}
+		NamespaceList namespace = namespaces.list();
     	exchange.getOut().setBody(namespace.getItems());
     }    
     
     protected void doGetNamespace(Exchange exchange, String operation) {
     	String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
     	if (ObjectHelper.isEmpty(namespaceName)) {
-    		LOG.error("Get a specific namespace require specify a namespace name or a labels set");
-    		throw new IllegalArgumentException("Get a specific namespace require specify a namespace name or a labels set");
+    		LOG.error("Get a specific namespace require specify a namespace name");
+    		throw new IllegalArgumentException("Get a specific namespace require specify a namespace name");
     	}
     	Namespace namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).get();
     	exchange.getOut().setBody(namespace);

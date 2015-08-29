@@ -18,9 +18,17 @@ package org.apache.camel.component.kubernetes.producer;
 
 public interface KubernetesOperations {
 
-    String LIST_NAMESPACE_OPERATION = "listNamespace";
-    String LIST_NAMESPACE_BY_LABELS_OPERATION = "listNamespaceByLabels";
+	// Namespaces
+    String LIST_NAMESPACE_OPERATION = "listNamespaces";
+    String LIST_NAMESPACE_BY_LABELS_OPERATION = "listNamespacesByLabels";
     String GET_NAMESPACE_OPERATION = "getNamespace";
     String CREATE_NAMESPACE_OPERATION = "createNamespace";
     String DELETE_NAMESPACE_OPERATION = "deleteNamespace";
+    
+    // Services 
+    String LIST_SERVICES_OPERATION = "listServices";
+    String LIST_SERVICES_BY_LABELS_OPERATION = "listServicesByLabels";
+    String GET_SERVICE_OPERATION = "getService";
+    String CREATE_SERVICE_OPERATION = "createService";
+    String DELETE_SERVICE_OPERATION = "deleteService";
 }

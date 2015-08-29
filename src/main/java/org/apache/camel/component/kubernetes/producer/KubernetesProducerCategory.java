@@ -19,4 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 public interface KubernetesProducerCategory {
 
     String NAMESPACES = "namespaces";
+    
+    String SERVICES = "services";
 }
