@@ -18,4 +18,6 @@ package org.apache.camel.component.kubernetes;
 
 public interface KubernetesConstants {
     String KUBERNETES_OPERATION = "CamelKubernetesOperation";
+    String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";
+    String KUBERNETES_NAMESPACE_LABELS = "CamelKubernetesNamespaceLabels";
 }
