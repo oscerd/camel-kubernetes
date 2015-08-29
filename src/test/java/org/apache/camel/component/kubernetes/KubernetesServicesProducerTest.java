@@ -39,6 +39,10 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
     private String password;
     private String host;
     
+    // The Camel-Kubernetes tests are based on vagrant fabric8-image
+    // https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift
+    // by running the vagrant image you'll have an environment with Openshift/Kubernetes installed
+    
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
