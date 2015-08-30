@@ -31,4 +31,11 @@ public interface KubernetesOperations {
     String GET_SERVICE_OPERATION = "getService";
     String CREATE_SERVICE_OPERATION = "createService";
     String DELETE_SERVICE_OPERATION = "deleteService";
+    
+    // Replication Controllers
+    String LIST_REPLICATION_CONTROLLERS_OPERATION = "listReplicationControllers";
+    String LIST_REPLICATION_CONTROLLERS_BY_LABELS_OPERATION = "listReplicationControllersByLabels";
+    String GET_REPLICATION_CONTROLLER_OPERATION = "getReplicationController";
+    String CREATE_REPLICATION_CONTROLLER_OPERATION = "createReplicationController";
+    String DELETE_REPLICATION_CONTROLLER_OPERATION = "deleteReplicationController";
 }

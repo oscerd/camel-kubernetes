@@ -148,15 +148,15 @@ public class KubernetesServicesProducer extends DefaultProducer {
     	ServiceSpec serviceSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, ServiceSpec.class);
     	if (ObjectHelper.isEmpty(serviceName)) {
     		LOG.error("Create a specific service require specify a service name");
-    		throw new IllegalArgumentException("Get a specific service require specify a service name");
+    		throw new IllegalArgumentException("Create a specific service require specify a service name");
     	}
     	if (ObjectHelper.isEmpty(namespaceName)) {
     		LOG.error("Create a specific service require specify a namespace name");
-    		throw new IllegalArgumentException("Get a specific service require specify a namespace name");
+    		throw new IllegalArgumentException("Create a specific service require specify a namespace name");
     	}
     	if (ObjectHelper.isEmpty(serviceSpec)) {
     		LOG.error("Create a specific service require specify a service spec bean");
-    		throw new IllegalArgumentException("Get a specific service require specify a service spec bean");
+    		throw new IllegalArgumentException("Create a specific service require specify a service spec bean");
     	}
     	Map<String,String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
     	EditableService serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata().withSpec(serviceSpec).build();
@@ -171,7 +171,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
     		LOG.error("Delete a specific service require specify a service name");
     		throw new IllegalArgumentException("Delete a specific service require specify a service name");
     	}
-    	if (ObjectHelper.isEmpty(serviceName)) {
+    	if (ObjectHelper.isEmpty(namespaceName)) {
     		LOG.error("Delete a specific service require specify a namespace name");
     		throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
     	}

@@ -183,9 +183,9 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespace",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespaces",host,username,password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespaceByLabels",host,username,password);                
+                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespacesByLabels",host,username,password);                
                 from("direct:getNs")
                         .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=getNamespace",host,username,password);
                 from("direct:createNamespace")

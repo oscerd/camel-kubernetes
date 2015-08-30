@@ -21,4 +21,6 @@ public interface KubernetesProducerCategory {
     String NAMESPACES = "namespaces";
     
     String SERVICES = "services";
+    
+    String REPLICATION_CONTROLLERS = "replicationControllers";
 }
