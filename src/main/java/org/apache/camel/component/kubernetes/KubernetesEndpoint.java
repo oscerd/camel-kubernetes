@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesProducerCategory;
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesServicesProducer;
@@ -61,6 +62,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         		
         	case KubernetesProducerCategory.REPLICATION_CONTROLLERS:
         		return new KubernetesReplicationControllersProducer(this);
+        		
+        	case KubernetesProducerCategory.PODS:
+        		return new KubernetesPodsProducer(this);
         	    
         	default:
         		throw new IllegalArgumentException("The " + category + " producer category doesn't exist");

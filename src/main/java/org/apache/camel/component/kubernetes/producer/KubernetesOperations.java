@@ -38,4 +38,11 @@ public interface KubernetesOperations {
     String GET_REPLICATION_CONTROLLER_OPERATION = "getReplicationController";
     String CREATE_REPLICATION_CONTROLLER_OPERATION = "createReplicationController";
     String DELETE_REPLICATION_CONTROLLER_OPERATION = "deleteReplicationController";
+    
+    // Pods
+    String LIST_PODS_OPERATION = "listPods";
+    String LIST_PODS_BY_LABELS_OPERATION = "listPodsByLabels";
+    String GET_POD_OPERATION = "getPod";
+    String CREATE_POD_OPERATION = "createPod";
+    String DELETE_POD_OPERATION = "deletePod";
 }

@@ -23,4 +23,6 @@ public interface KubernetesProducerCategory {
     String SERVICES = "services";
     
     String REPLICATION_CONTROLLERS = "replicationControllers";
+    
+    String PODS = "pods";
 }
