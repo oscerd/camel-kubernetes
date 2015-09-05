@@ -29,4 +29,6 @@ public interface KubernetesConstants {
     String KUBERNETES_PODS_LABELS = "CamelKubernetesPodsLabels";
     String KUBERNETES_POD_NAME = "CamelKubernetesPodName";
     String KUBERNETES_POD_SPEC = "CamelKubernetesPodSpec";
+    String KUBERNETES_PERSISTENT_VOLUMES_LABELS = "CamelKubernetesPersistentVolumesLabels";
+    String KUBERNETES_PERSISTENT_VOLUME_NAME = "CamelKubernetesPersistentVolumeName";
 }

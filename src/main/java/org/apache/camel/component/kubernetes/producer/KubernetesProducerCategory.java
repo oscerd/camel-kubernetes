@@ -25,4 +25,6 @@ public interface KubernetesProducerCategory {
     String REPLICATION_CONTROLLERS = "replicationControllers";
     
     String PODS = "pods";
+    
+    String PERSISTENT_VOLUMES = "persistentVolumes";
 }

@@ -45,4 +45,10 @@ public interface KubernetesOperations {
     String GET_POD_OPERATION = "getPod";
     String CREATE_POD_OPERATION = "createPod";
     String DELETE_POD_OPERATION = "deletePod";
+    
+    // Persistent Volumes
+    String LIST_PERSISTENT_VOLUMES = "listPersistentVolumes";
+    String LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION = "listPersistentVolumesByLabels";
+    String GET_PERSISTENT_VOLUME_OPERATION = "getPersistentVolume";
+    
 }
