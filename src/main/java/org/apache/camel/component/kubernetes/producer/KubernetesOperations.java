@@ -51,4 +51,11 @@ public interface KubernetesOperations {
     String LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION = "listPersistentVolumesByLabels";
     String GET_PERSISTENT_VOLUME_OPERATION = "getPersistentVolume";
     
+    // Persistent Volumes Claims
+    String LIST_PERSISTENT_VOLUMES_CLAIMS = "listPersistentVolumesClaims";
+    String LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION = "listPersistentVolumesClaimsByLabels";
+    String GET_PERSISTENT_VOLUME_CLAIM_OPERATION = "getPersistentVolumeClaim";
+    String CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "createPersistentVolumeClaim";
+    String DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION = "deletePersistentVolumeClaim";
+    
 }

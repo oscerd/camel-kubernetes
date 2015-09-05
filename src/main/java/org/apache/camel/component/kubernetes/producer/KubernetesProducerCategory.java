@@ -27,4 +27,6 @@ public interface KubernetesProducerCategory {
     String PODS = "pods";
     
     String PERSISTENT_VOLUMES = "persistentVolumes";
+    
+    String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
 }

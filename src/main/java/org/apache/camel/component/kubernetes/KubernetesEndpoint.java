@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesProducerCategory;
@@ -69,6 +70,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         		
         	case KubernetesProducerCategory.PERSISTENT_VOLUMES:
         		return new KubernetesPersistentVolumesProducer(this);
+        		
+        	case KubernetesProducerCategory.PERSISTENT_VOLUMES_CLAIMS:
+        		return new KubernetesPersistentVolumesClaimsProducer(this);
         	    
         	default:
         		throw new IllegalArgumentException("The " + category + " producer category doesn't exist");
