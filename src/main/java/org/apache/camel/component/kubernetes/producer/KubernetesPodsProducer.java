@@ -18,14 +18,10 @@ package org.apache.camel.component.kubernetes.producer;
 
 import io.fabric8.kubernetes.api.model.DoneablePod;
 import io.fabric8.kubernetes.api.model.EditablePod;
-import io.fabric8.kubernetes.api.model.EditableService;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
@@ -44,11 +40,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KubernetesPodsProducer.class);
 
-    private final KubernetesEndpoint endpoint;
-
     public KubernetesPodsProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
     }
     
     @Override

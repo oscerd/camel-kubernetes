@@ -41,11 +41,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KubernetesServicesProducer.class);
 
-    private final KubernetesEndpoint endpoint;
-
     public KubernetesServicesProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
     }
     
     @Override

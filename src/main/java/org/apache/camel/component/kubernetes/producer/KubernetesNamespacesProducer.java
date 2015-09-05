@@ -39,11 +39,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KubernetesNamespacesProducer.class);
 
-    private final KubernetesEndpoint endpoint;
-
     public KubernetesNamespacesProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
     }
     
     @Override
