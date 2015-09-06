@@ -37,4 +37,7 @@ public interface KubernetesConstants {
     String KUBERNETES_SECRETS_LABELS = "CamelKubernetesSecretsLabels";
     String KUBERNETES_SECRET_NAME = "CamelKubernetesSecretName";
     String KUBERNETES_SECRET = "CamelKubernetesSecret";
+    String KUBERNETES_RESOURCES_QUOTA_LABELS = "CamelKubernetesResourcesQuotaLabels";
+    String KUBERNETES_RESOURCES_QUOTA_NAME = "CamelKubernetesResourcesQuotaName";
+    String KUBERNETES_RESOURCE_QUOTA_SPEC = "CamelKubernetesResourceQuotaSpec";
 }

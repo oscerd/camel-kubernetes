@@ -31,4 +31,6 @@ public interface KubernetesProducerCategory {
     String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
     
     String SECRETS = "secrets";
+    
+    String RESOURCES_QUOTA = "resourcesQuota";
 }

@@ -64,4 +64,11 @@ public interface KubernetesOperations {
     String GET_SECRET_OPERATION = "getSecret";
     String CREATE_SECRET_OPERATION = "createSecret";
     String DELETE_SECRET_OPERATION = "deleteSecret";
+    
+    // Resources quota
+    String LIST_RESOURCES_QUOTA = "listResourcesQuota";
+    String LIST_RESOURCES_QUOTA_BY_LABELS_OPERATION = "listResourcesQuotaByLabels";
+    String GET_RESOURCE_QUOTA_OPERATION = "getResourceQuota";
+    String CREATE_RESOURCE_QUOTA_OPERATION = "createResourceQuota";
+    String DELETE_RESOURCE_QUOTA_OPERATION = "deleteResourceQuota";
 }

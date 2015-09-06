@@ -28,6 +28,7 @@ import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolume
 import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesProducerCategory;
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesServicesProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -79,7 +80,10 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesProducerCategory.SECRETS:
                 return new KubernetesSecretsProducer(this);
-
+                
+            case KubernetesProducerCategory.RESOURCES_QUOTA:
+                return new KubernetesResourcesQuotaProducer(this);
+                
             default:
                 throw new IllegalArgumentException("The " + category
                         + " producer category doesn't exist");
