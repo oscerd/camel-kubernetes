@@ -34,4 +34,7 @@ public interface KubernetesConstants {
     String KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS = "CamelKubernetesPersistentVolumesClaimsLabels";
     String KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME = "CamelKubernetesPersistentVolumeClaimName";
     String KUBERNETES_PERSISTENT_VOLUME_CLAIM_SPEC = "CamelKubernetesPersistentVolumeClaimSpec";
+    String KUBERNETES_SECRETS_LABELS = "CamelKubernetesSecretsLabels";
+    String KUBERNETES_SECRET_NAME = "CamelKubernetesSecretName";
+    String KUBERNETES_SECRET = "CamelKubernetesSecret";
 }

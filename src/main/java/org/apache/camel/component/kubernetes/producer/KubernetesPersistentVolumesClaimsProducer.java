@@ -16,19 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import io.fabric8.kubernetes.api.model.DoneablePersistentVolume;
 import io.fabric8.kubernetes.api.model.DoneablePersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.EditablePersistentVolumeClaim;
-import io.fabric8.kubernetes.api.model.EditableService;
-import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
-import io.fabric8.kubernetes.api.model.PersistentVolumeList;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
@@ -168,11 +161,11 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     	String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
     	if (ObjectHelper.isEmpty(pvcName)) {
     		LOG.error("Delete a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
-    		throw new IllegalArgumentException("Delete a specific service require specify a Persistent Volume Claim name");
+    		throw new IllegalArgumentException("Delete a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
     	}
     	if (ObjectHelper.isEmpty(namespaceName)) {
     		LOG.error("Delete a specific Persistent Volume Claim require specify a namespace name");
-    		throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
+    		throw new IllegalArgumentException("Delete a specific Persistent Volume Claim require specify a namespace name");
     	}
     	boolean pvcDeleted = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName).withName(pvcName).delete();
         exchange.getOut().setBody(pvcDeleted);

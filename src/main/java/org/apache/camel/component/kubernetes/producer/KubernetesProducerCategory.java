@@ -29,4 +29,6 @@ public interface KubernetesProducerCategory {
     String PERSISTENT_VOLUMES = "persistentVolumes";
     
     String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
+    
+    String SECRETS = "secrets";
 }

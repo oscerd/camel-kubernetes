@@ -58,4 +58,10 @@ public interface KubernetesOperations {
     String CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "createPersistentVolumeClaim";
     String DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION = "deletePersistentVolumeClaim";
     
+    // Secrets
+    String LIST_SECRETS = "listSecrets";
+    String LIST_SECRETS_BY_LABELS_OPERATION = "listSecretsByLabels";
+    String GET_SECRET_OPERATION = "getSecret";
+    String CREATE_SECRET_OPERATION = "createSecret";
+    String DELETE_SECRET_OPERATION = "deleteSecret";
 }
