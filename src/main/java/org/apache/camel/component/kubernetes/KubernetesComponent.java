@@ -27,7 +27,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class KubernetesComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining,
+            Map<String, Object> parameters) throws Exception {
         KubernetesConfiguration config = new KubernetesConfiguration();
         setProperties(config, parameters);
         config.setMasterUrl(remaining);

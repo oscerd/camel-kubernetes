@@ -40,10 +40,11 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
     @UriParam
     private KubernetesConfiguration configuration;
-    
+
     private DefaultKubernetesClient client;
 
-    public KubernetesEndpoint(String uri, KubernetesComponent component, KubernetesConfiguration config) {
+    public KubernetesEndpoint(String uri, KubernetesComponent component,
+            KubernetesConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }
@@ -51,53 +52,56 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getCategory())) {
-        	throw new IllegalArgumentException("A producer category must be specified");
+            throw new IllegalArgumentException(
+                    "A producer category must be specified");
         } else {
-        	String category = configuration.getCategory();
-        	
-        	switch (category) {
-        	
-        	case KubernetesProducerCategory.NAMESPACES:
-        		return new KubernetesNamespacesProducer(this);
-        		
-        	case KubernetesProducerCategory.SERVICES:
-        		return new KubernetesServicesProducer(this);
-        		
-        	case KubernetesProducerCategory.REPLICATION_CONTROLLERS:
-        		return new KubernetesReplicationControllersProducer(this);
-        		
-        	case KubernetesProducerCategory.PODS:
-        		return new KubernetesPodsProducer(this);
-        		
-        	case KubernetesProducerCategory.PERSISTENT_VOLUMES:
-        		return new KubernetesPersistentVolumesProducer(this);
-        		
-        	case KubernetesProducerCategory.PERSISTENT_VOLUMES_CLAIMS:
-        		return new KubernetesPersistentVolumesClaimsProducer(this);
-        		
-        	case KubernetesProducerCategory.SECRETS:
-        		return new KubernetesSecretsProducer(this);
-        	    
-        	default:
-        		throw new IllegalArgumentException("The " + category + " producer category doesn't exist");
-        	}
+            String category = configuration.getCategory();
+
+            switch (category) {
+
+            case KubernetesProducerCategory.NAMESPACES:
+                return new KubernetesNamespacesProducer(this);
+
+            case KubernetesProducerCategory.SERVICES:
+                return new KubernetesServicesProducer(this);
+
+            case KubernetesProducerCategory.REPLICATION_CONTROLLERS:
+                return new KubernetesReplicationControllersProducer(this);
+
+            case KubernetesProducerCategory.PODS:
+                return new KubernetesPodsProducer(this);
+
+            case KubernetesProducerCategory.PERSISTENT_VOLUMES:
+                return new KubernetesPersistentVolumesProducer(this);
+
+            case KubernetesProducerCategory.PERSISTENT_VOLUMES_CLAIMS:
+                return new KubernetesPersistentVolumesClaimsProducer(this);
+
+            case KubernetesProducerCategory.SECRETS:
+                return new KubernetesSecretsProducer(this);
+
+            default:
+                throw new IllegalArgumentException("The " + category
+                        + " producer category doesn't exist");
+            }
         }
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-		return null;
+        return null;
     }
 
     @Override
     public boolean isSingleton() {
         return false;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        client = configuration.getKubernetesClient() != null ? configuration.getKubernetesClient() : createKubernetesClient();
+        client = configuration.getKubernetesClient() != null ? configuration
+                .getKubernetesClient() : createKubernetesClient();
     }
 
     @Override
@@ -105,36 +109,38 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         super.doStop();
         client.close();
     }
-    
+
     public DefaultKubernetesClient getKubernetesClient() {
         return client;
     }
-    
+
     public KubernetesConfiguration getKubernetesConfiguration() {
         return configuration;
     }
-    
+
     private DefaultKubernetesClient createKubernetesClient() {
-    	DefaultKubernetesClient kubeClient = new DefaultKubernetesClient();
+        DefaultKubernetesClient kubeClient = new DefaultKubernetesClient();
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper
+                .isNotEmpty(configuration.getPassword()))
+                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         } else {
             builder.withOauthToken(configuration.getOauthToken());
         }
         if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
-        	builder.withCaCertData(configuration.getCaCertData());
+            builder.withCaCertData(configuration.getCaCertData());
         }
         if (ObjectHelper.isNotEmpty(configuration.getCaCertFile())) {
-        	builder.withCaCertFile(configuration.getCaCertFile());
+            builder.withCaCertFile(configuration.getCaCertFile());
         }
         if (ObjectHelper.isNotEmpty(configuration.getClientCertData())) {
-        	builder.withClientCertData(configuration.getClientCertData());
+            builder.withClientCertData(configuration.getClientCertData());
         }
         if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
-        	builder.withClientCertFile(configuration.getClientCertFile());
+            builder.withClientCertFile(configuration.getClientCertFile());
         }
         kubeClient = new DefaultKubernetesClient(builder.build());
         return kubeClient;

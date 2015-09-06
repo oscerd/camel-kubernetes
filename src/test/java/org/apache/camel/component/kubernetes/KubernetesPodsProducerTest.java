@@ -16,21 +16,16 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import io.fabric8.kubernetes.api.model.Container;
-import io.fabric8.kubernetes.api.model.ContainerPort;
-import io.fabric8.kubernetes.api.model.IntOrString;
-import io.fabric8.kubernetes.api.model.Namespace;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import io.fabric8.kubernetes.api.model.Container;
+import io.fabric8.kubernetes.api.model.ContainerPort;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodSpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -43,11 +38,12 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
     private String username;
     private String password;
     private String host;
-    
+
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
     // https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift
-    // by running the vagrant image you'll have an environment with Openshift/Kubernetes installed
-    
+    // by running the vagrant image you'll have an environment with
+    // Openshift/Kubernetes installed
+
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
@@ -56,149 +52,169 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
-    
+
     @Test
     public void listTest() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
+        if (username == null) {
+            return;
+        }
         List<Pod> result = template.requestBody("direct:list", "", List.class);
-        
+
         boolean defaultExists = false;
-        
+
         Iterator<Pod> it = result.iterator();
         while (it.hasNext()) {
-			Pod pod = (Pod) it.next();
-			if ((pod.getMetadata().getName()).contains("fabric8")) {
-				defaultExists = true;
-			}
-		}
-        
+            Pod pod = (Pod) it.next();
+            if ((pod.getMetadata().getName()).contains("fabric8")) {
+                defaultExists = true;
+            }
+        }
+
         assertTrue(defaultExists);
     }
-    
+
     @Test
     public void listByLabelsTest() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
+        if (username == null) {
+            return;
+        }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-				Map<String,String> labels = new HashMap<String,String>();
-				labels.put("component", "elasticsearch");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
-			}
-		});
-        
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                Map<String, String> labels = new HashMap<String, String>();
+                labels.put("component", "elasticsearch");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+            }
+        });
+
         List<Pod> result = ex.getOut().getBody(List.class);
-        
+
         boolean podExists = false;
         Iterator<Pod> it = result.iterator();
         while (it.hasNext()) {
-        	Pod pod = (Pod) it.next();
-        	if (pod.getMetadata().getLabels().containsValue("elasticsearch")) {
-        		podExists = true;
-        	}
-		}
-        
+            Pod pod = (Pod) it.next();
+            if (pod.getMetadata().getLabels().containsValue("elasticsearch")) {
+                podExists = true;
+            }
+        }
+
         assertTrue(podExists);
     }
-    
+
     @Test
     public void getPodTest() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
+        if (username == null) {
+            return;
+        }
         Exchange ex = template.request("direct:getPod", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "elasticsearch-7015o");
-			}
-		});
-        
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_POD_NAME,
+                        "elasticsearch-7015o");
+            }
+        });
+
         Pod result = ex.getOut().getBody(Pod.class);
-        
-        assertEquals(result.getMetadata().getName(),"elasticsearch-7015o");
+
+        assertEquals(result.getMetadata().getName(), "elasticsearch-7015o");
     }
-    
+
     @Test
     public void createAndDeletePod() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
+        if (username == null) {
+            return;
+        }
         Exchange ex = template.request("direct:createPod", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-				Map<String,String> labels = new HashMap<String,String>();
-				labels.put("this", "rocks");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
-				PodSpec podSpec = new PodSpec();
-				podSpec.setHost("172.28.128.4");
-				Container cont = new Container();
-				cont.setImage("docker.io/jboss/wildfly:latest");
-				cont.setName("pippo");
-				
-				List<ContainerPort> containerPort = new ArrayList<ContainerPort>();
-				ContainerPort port = new ContainerPort();
-				port.setHostIP("0.0.0.0");
-				port.setHostPort(8080);
-				port.setContainerPort(8080);
-				
-				containerPort.add(port);
-				
-				cont.setPorts(containerPort);
-				
-				List<Container> list = new ArrayList<Container>();
-				list.add(cont);
-				
-				podSpec.setContainers(list);
-				
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
-			}
-		});
-        
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_POD_NAME, "test");
+                Map<String, String> labels = new HashMap<String, String>();
+                labels.put("this", "rocks");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+                PodSpec podSpec = new PodSpec();
+                podSpec.setHost("172.28.128.4");
+                Container cont = new Container();
+                cont.setImage("docker.io/jboss/wildfly:latest");
+                cont.setName("pippo");
+
+                List<ContainerPort> containerPort = new ArrayList<ContainerPort>();
+                ContainerPort port = new ContainerPort();
+                port.setHostIP("0.0.0.0");
+                port.setHostPort(8080);
+                port.setContainerPort(8080);
+
+                containerPort.add(port);
+
+                cont.setPorts(containerPort);
+
+                List<Container> list = new ArrayList<Container>();
+                list.add(cont);
+
+                podSpec.setContainers(list);
+
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
+            }
+        });
+
         Pod pod = ex.getOut().getBody(Pod.class);
-        
+
         assertEquals(pod.getMetadata().getName(), "test");
-        
-    	ex = template.request("direct:deletePod", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-			}
-		});
+
+        ex = template.request("direct:deletePod", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_POD_NAME, "test");
+            }
+        });
 
         boolean podDeleted = ex.getOut().getBody(Boolean.class);
-        
+
         assertTrue(podDeleted);
     }
-    
-	@Override
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {            
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPods",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPods",
+                                host, username, password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPodsByLabels",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPodsByLabels",
+                                host, username, password);
                 from("direct:getPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=getPod",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=getPod",
+                                host, username, password);
                 from("direct:createPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=createPod",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=createPod",
+                                host, username, password);
                 from("direct:deletePod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",host,username,password);
-            } 
+                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",
+                                host, username, password);
+            }
         };
     }
 }

@@ -18,7 +18,7 @@ package org.apache.camel.component.kubernetes.producer;
 
 public interface KubernetesOperations {
 
-	// Namespaces
+    // Namespaces
     String LIST_NAMESPACE_OPERATION = "listNamespaces";
     String LIST_NAMESPACE_BY_LABELS_OPERATION = "listNamespacesByLabels";
     String GET_NAMESPACE_OPERATION = "getNamespace";

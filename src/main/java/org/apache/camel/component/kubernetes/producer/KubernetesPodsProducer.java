@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
+import java.util.Map;
+
 import io.fabric8.kubernetes.api.model.DoneablePod;
 import io.fabric8.kubernetes.api.model.EditablePod;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -25,8 +27,6 @@ import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
-
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -38,126 +38,155 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesPodsProducer extends DefaultProducer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(KubernetesPodsProducer.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(KubernetesPodsProducer.class);
 
     public KubernetesPodsProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
     }
-    
+
     @Override
     public KubernetesEndpoint getEndpoint() {
         return (KubernetesEndpoint) super.getEndpoint();
     }
-   
-	@Override
-	public void process(Exchange exchange) throws Exception {
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
         String operation;
-        
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
+
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
+                .getOperation())) {
+            operation = exchange.getIn().getHeader(
+                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
+            operation = getEndpoint().getKubernetesConfiguration()
+                    .getOperation();
         }
-        
+
         switch (operation) {
-        
+
         case KubernetesOperations.LIST_PODS_OPERATION:
             doList(exchange, operation);
             break;
-            
+
         case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
-        	doListPodsByLabel(exchange, operation);
+            doListPodsByLabel(exchange, operation);
             break;
-            
+
         case KubernetesOperations.GET_POD_OPERATION:
-        	doGetPod(exchange, operation);
+            doGetPod(exchange, operation);
             break;
 
         case KubernetesOperations.CREATE_POD_OPERATION:
-        	doCreatePod(exchange, operation);
+            doCreatePod(exchange, operation);
             break;
-            
+
         case KubernetesOperations.DELETE_POD_OPERATION:
-        	doDeletePod(exchange, operation);
+            doDeletePod(exchange, operation);
             break;
-            
+
         default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            throw new IllegalArgumentException("Unsupported operation "
+                    + operation);
         }
-	}
-	
+    }
+
     protected void doList(Exchange exchange, String operation) throws Exception {
         PodList podList = getEndpoint().getKubernetesClient().pods().list();
         exchange.getOut().setBody(podList.getItems());
     }
-    
+
     protected void doListPodsByLabel(Exchange exchange, String operation) {
-    	Map<String,String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-    	if (ObjectHelper.isEmpty(labels)) {
-    		LOG.error("Get pods by labels require specify a labels set");
-    		throw new IllegalArgumentException("Get pods by labels require specify a labels set");
-    	}
-    	ClientOperation<KubernetesClient, Pod, PodList, DoneablePod, ClientResource<Pod, DoneablePod>> pods;
-    	pods = getEndpoint().getKubernetesClient().pods();
-		for (Map.Entry<String, String> entry : labels.entrySet())
-		{
-		    pods.withLabel(entry.getKey(), entry.getValue());
-		}
-		PodList podList = pods.list();
-    	exchange.getOut().setBody(podList.getItems());
+        Map<String, String> labels = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Get pods by labels require specify a labels set");
+            throw new IllegalArgumentException(
+                    "Get pods by labels require specify a labels set");
+        }
+        ClientOperation<KubernetesClient, Pod, PodList, DoneablePod, ClientResource<Pod, DoneablePod>> pods;
+        pods = getEndpoint().getKubernetesClient().pods();
+        for (Map.Entry<String, String> entry : labels.entrySet()) {
+            pods.withLabel(entry.getKey(), entry.getValue());
+        }
+        PodList podList = pods.list();
+        exchange.getOut().setBody(podList.getItems());
     }
-    
-    protected void doGetPod(Exchange exchange, String operation) throws Exception {
-    	Pod pod = null;
-    	String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-    	String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-    	if (ObjectHelper.isEmpty(podName)) {
-    		LOG.error("Get a specific pod require specify a pod name");
-    		throw new IllegalArgumentException("Get a specific pod require specify a pod name");
-    	}
-    	if (ObjectHelper.isEmpty(namespaceName)) {
-    		LOG.error("Get a specific pod require specify a namespace name");
-    		throw new IllegalArgumentException("Get a specific pod require specify a namespace name");
-    	}
-    	pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
+
+    protected void doGetPod(Exchange exchange, String operation)
+            throws Exception {
+        Pod pod = null;
+        String podName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_POD_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isEmpty(podName)) {
+            LOG.error("Get a specific pod require specify a pod name");
+            throw new IllegalArgumentException(
+                    "Get a specific pod require specify a pod name");
+        }
+        if (ObjectHelper.isEmpty(namespaceName)) {
+            LOG.error("Get a specific pod require specify a namespace name");
+            throw new IllegalArgumentException(
+                    "Get a specific pod require specify a namespace name");
+        }
+        pod = getEndpoint().getKubernetesClient().pods()
+                .inNamespace(namespaceName).withName(podName).get();
         exchange.getOut().setBody(pod);
     }
-    
-    protected void doCreatePod(Exchange exchange, String operation) throws Exception {
-    	Pod pod = null;
-    	String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-    	String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-    	PodSpec podSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
-    	if (ObjectHelper.isEmpty(podName)) {
-    		LOG.error("Create a specific pod require specify a pod name");
-    		throw new IllegalArgumentException("Create a specific pod require specify a pod name");
-    	}
-    	if (ObjectHelper.isEmpty(namespaceName)) {
-    		LOG.error("Create a specific pod require specify a namespace name");
-    		throw new IllegalArgumentException("Create a specific pod require specify a namespace name");
-    	}
-    	if (ObjectHelper.isEmpty(podSpec)) {
-    		LOG.error("Create a specific pod require specify a pod spec bean");
-    		throw new IllegalArgumentException("Create a specific pod require specify a pod spec bean");
-    	}
-    	Map<String,String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-    	EditablePod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata().withSpec(podSpec).build();
-    	pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
+
+    protected void doCreatePod(Exchange exchange, String operation)
+            throws Exception {
+        Pod pod = null;
+        String podName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_POD_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        PodSpec podSpec = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
+        if (ObjectHelper.isEmpty(podName)) {
+            LOG.error("Create a specific pod require specify a pod name");
+            throw new IllegalArgumentException(
+                    "Create a specific pod require specify a pod name");
+        }
+        if (ObjectHelper.isEmpty(namespaceName)) {
+            LOG.error("Create a specific pod require specify a namespace name");
+            throw new IllegalArgumentException(
+                    "Create a specific pod require specify a namespace name");
+        }
+        if (ObjectHelper.isEmpty(podSpec)) {
+            LOG.error("Create a specific pod require specify a pod spec bean");
+            throw new IllegalArgumentException(
+                    "Create a specific pod require specify a pod spec bean");
+        }
+        Map<String, String> labels = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        EditablePod podCreating = new PodBuilder().withNewMetadata()
+                .withName(podName).withLabels(labels).endMetadata()
+                .withSpec(podSpec).build();
+        pod = getEndpoint().getKubernetesClient().pods()
+                .inNamespace(namespaceName).create(podCreating);
         exchange.getOut().setBody(pod);
     }
-    
-    protected void doDeletePod(Exchange exchange, String operation) throws Exception {
-    	String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-    	String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-    	if (ObjectHelper.isEmpty(podName)) {
-    		LOG.error("Delete a specific pod require specify a pod name");
-    		throw new IllegalArgumentException("Delete a specific pod require specify a pod name");
-    	}
-    	if (ObjectHelper.isEmpty(namespaceName)) {
-    		LOG.error("Delete a specific pod require specify a namespace name");
-    		throw new IllegalArgumentException("Delete a specific pod require specify a namespace name");
-    	}
-    	boolean podDeleted = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
+
+    protected void doDeletePod(Exchange exchange, String operation)
+            throws Exception {
+        String podName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_POD_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isEmpty(podName)) {
+            LOG.error("Delete a specific pod require specify a pod name");
+            throw new IllegalArgumentException(
+                    "Delete a specific pod require specify a pod name");
+        }
+        if (ObjectHelper.isEmpty(namespaceName)) {
+            LOG.error("Delete a specific pod require specify a namespace name");
+            throw new IllegalArgumentException(
+                    "Delete a specific pod require specify a namespace name");
+        }
+        boolean podDeleted = getEndpoint().getKubernetesClient().pods()
+                .inNamespace(namespaceName).withName(podName).delete();
         exchange.getOut().setBody(podDeleted);
     }
 }

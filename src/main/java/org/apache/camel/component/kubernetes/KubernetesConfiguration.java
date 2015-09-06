@@ -23,206 +23,206 @@ import org.apache.camel.spi.UriParam;
 
 public class KubernetesConfiguration {
 
-	@UriParam
-	@Metadata(required = "true")
-	private String masterUrl;
-	
-	@UriParam(label = "producer")
-	@Metadata(required = "true")
-	private String category;
+    @UriParam
+    @Metadata(required = "true")
+    private String masterUrl;
 
-	@UriParam
-	private DefaultKubernetesClient kubernetesClient;
+    @UriParam(label = "producer")
+    @Metadata(required = "true")
+    private String category;
 
-	@UriParam
-	private String username;
+    @UriParam
+    private DefaultKubernetesClient kubernetesClient;
 
-	@UriParam
-	private String password;
+    @UriParam
+    private String username;
 
-	@UriParam(label = "producer")
-	private String operation;
+    @UriParam
+    private String password;
 
-	@UriParam
-	private String apiVersion;
+    @UriParam(label = "producer")
+    private String operation;
 
-	@UriParam
-	private String caCertData;
+    @UriParam
+    private String apiVersion;
 
-	@UriParam
-	private String caCertFile;
+    @UriParam
+    private String caCertData;
 
-	@UriParam
-	private String clientCertData;
+    @UriParam
+    private String caCertFile;
 
-	@UriParam
-	private String clientCertFile;
+    @UriParam
+    private String clientCertData;
 
-	@UriParam
-	private String clientKeyAlgo;
+    @UriParam
+    private String clientCertFile;
 
-	@UriParam
-	private String clientKeyData;
+    @UriParam
+    private String clientKeyAlgo;
 
-	@UriParam
-	private String clientKeyFile;
+    @UriParam
+    private String clientKeyData;
 
-	@UriParam
-	private String clientKeyPassphrase;
+    @UriParam
+    private String clientKeyFile;
 
-	@UriParam
-	private String oauthToken;
+    @UriParam
+    private String clientKeyPassphrase;
 
-	@UriParam
-	private Boolean trustCerts;
+    @UriParam
+    private String oauthToken;
 
-	public String getMasterUrl() {
-		return masterUrl;
-	}
+    @UriParam
+    private Boolean trustCerts;
 
-	public void setMasterUrl(String masterUrl) {
-		this.masterUrl = masterUrl;
-	}
+    public String getMasterUrl() {
+        return masterUrl;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public void setMasterUrl(String masterUrl) {
+        this.masterUrl = masterUrl;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public DefaultKubernetesClient getKubernetesClient() {
-		return kubernetesClient;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public void setKubernetesClient(DefaultKubernetesClient kubernetesClient) {
-		this.kubernetesClient = kubernetesClient;
-	}
+    public DefaultKubernetesClient getKubernetesClient() {
+        return kubernetesClient;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public void setKubernetesClient(DefaultKubernetesClient kubernetesClient) {
+        this.kubernetesClient = kubernetesClient;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getOperation() {
-		return operation;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    public String getOperation() {
+        return operation;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public String getCaCertData() {
-		return caCertData;
-	}
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
-	public void setCaCertData(String caCertData) {
-		this.caCertData = caCertData;
-	}
+    public String getCaCertData() {
+        return caCertData;
+    }
 
-	public String getCaCertFile() {
-		return caCertFile;
-	}
+    public void setCaCertData(String caCertData) {
+        this.caCertData = caCertData;
+    }
 
-	public void setCaCertFile(String caCertFile) {
-		this.caCertFile = caCertFile;
-	}
+    public String getCaCertFile() {
+        return caCertFile;
+    }
 
-	public String getClientCertData() {
-		return clientCertData;
-	}
+    public void setCaCertFile(String caCertFile) {
+        this.caCertFile = caCertFile;
+    }
 
-	public void setClientCertData(String clientCertData) {
-		this.clientCertData = clientCertData;
-	}
+    public String getClientCertData() {
+        return clientCertData;
+    }
 
-	public String getClientCertFile() {
-		return clientCertFile;
-	}
+    public void setClientCertData(String clientCertData) {
+        this.clientCertData = clientCertData;
+    }
 
-	public void setClientCertFile(String clientCertFile) {
-		this.clientCertFile = clientCertFile;
-	}
+    public String getClientCertFile() {
+        return clientCertFile;
+    }
 
-	public String getClientKeyAlgo() {
-		return clientKeyAlgo;
-	}
+    public void setClientCertFile(String clientCertFile) {
+        this.clientCertFile = clientCertFile;
+    }
 
-	public void setClientKeyAlgo(String clientKeyAlgo) {
-		this.clientKeyAlgo = clientKeyAlgo;
-	}
+    public String getClientKeyAlgo() {
+        return clientKeyAlgo;
+    }
 
-	public String getClientKeyData() {
-		return clientKeyData;
-	}
+    public void setClientKeyAlgo(String clientKeyAlgo) {
+        this.clientKeyAlgo = clientKeyAlgo;
+    }
 
-	public void setClientKeyData(String clientKeyData) {
-		this.clientKeyData = clientKeyData;
-	}
+    public String getClientKeyData() {
+        return clientKeyData;
+    }
 
-	public String getClientKeyFile() {
-		return clientKeyFile;
-	}
+    public void setClientKeyData(String clientKeyData) {
+        this.clientKeyData = clientKeyData;
+    }
 
-	public void setClientKeyFile(String clientKeyFile) {
-		this.clientKeyFile = clientKeyFile;
-	}
+    public String getClientKeyFile() {
+        return clientKeyFile;
+    }
 
-	public String getClientKeyPassphrase() {
-		return clientKeyPassphrase;
-	}
+    public void setClientKeyFile(String clientKeyFile) {
+        this.clientKeyFile = clientKeyFile;
+    }
 
-	public void setClientKeyPassphrase(String clientKeyPassphrase) {
-		this.clientKeyPassphrase = clientKeyPassphrase;
-	}
+    public String getClientKeyPassphrase() {
+        return clientKeyPassphrase;
+    }
 
-	public String getOauthToken() {
-		return oauthToken;
-	}
+    public void setClientKeyPassphrase(String clientKeyPassphrase) {
+        this.clientKeyPassphrase = clientKeyPassphrase;
+    }
 
-	public void setOauthToken(String oauthToken) {
-		this.oauthToken = oauthToken;
-	}
+    public String getOauthToken() {
+        return oauthToken;
+    }
 
-	public Boolean getTrustCerts() {
-		return trustCerts;
-	}
+    public void setOauthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
+    }
 
-	public void setTrustCerts(Boolean trustCerts) {
-		this.trustCerts = trustCerts;
-	}
+    public Boolean getTrustCerts() {
+        return trustCerts;
+    }
 
-	@Override
-	public String toString() {
-		return "KubernetesConfiguration [masterUrl=" + masterUrl
-				+ ", username=" + username + ", password=" + password
-				+ ", operation=" + operation + ", apiVersion=" + apiVersion
-				+ ", caCertData=" + caCertData + ", caCertFile=" + caCertFile
-				+ ", clientCertData=" + clientCertData + ", clientCertFile="
-				+ clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo
-				+ ", clientKeyData=" + clientKeyData + ", clientKeyFile="
-				+ clientKeyFile + ", clientKeyPassphrase="
-				+ clientKeyPassphrase + ", oauthToken=" + oauthToken
-				+ ", trustCerts=" + trustCerts + "]";
-	}
+    public void setTrustCerts(Boolean trustCerts) {
+        this.trustCerts = trustCerts;
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesConfiguration [masterUrl=" + masterUrl
+                + ", username=" + username + ", password=" + password
+                + ", operation=" + operation + ", apiVersion=" + apiVersion
+                + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile
+                + ", clientCertData=" + clientCertData + ", clientCertFile="
+                + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo
+                + ", clientKeyData=" + clientKeyData + ", clientKeyFile="
+                + clientKeyFile + ", clientKeyPassphrase="
+                + clientKeyPassphrase + ", oauthToken=" + oauthToken
+                + ", trustCerts=" + trustCerts + "]";
+    }
 }

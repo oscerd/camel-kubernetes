@@ -16,20 +16,11 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import io.fabric8.kubernetes.api.model.GlusterfsVolumeSource;
-import io.fabric8.kubernetes.api.model.HostPathVolumeSource;
-import io.fabric8.kubernetes.api.model.PersistentVolume;
-import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
-import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
-import io.fabric8.kubernetes.api.model.PersistentVolumeSpec;
-import io.fabric8.kubernetes.api.model.Quantity;
-import io.fabric8.kubernetes.api.model.ResourceRequirements;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import io.fabric8.kubernetes.api.model.PersistentVolume;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,11 +33,12 @@ public class KubernetesPersistentVolumesProducerTest extends CamelTestSupport {
     private String username;
     private String password;
     private String host;
-    
+
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
     // https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift
-    // by running the vagrant image you'll have an environment with Openshift/Kubernetes installed
-    
+    // by running the vagrant image you'll have an environment with
+    // Openshift/Kubernetes installed
+
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
@@ -55,46 +47,54 @@ public class KubernetesPersistentVolumesProducerTest extends CamelTestSupport {
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
-    
+
     @Test
     public void listTest() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
-        List<PersistentVolume> result = template.requestBody("direct:list", "", List.class);
-        
+        if (username == null) {
+            return;
+        }
+        List<PersistentVolume> result = template.requestBody("direct:list", "",
+                List.class);
+
         assertTrue(result.size() == 0);
     }
-    
+
     @Test
     public void listByLabelsTest() throws Exception {
-    	if (username == null) {
-    		return;
-    	}
+        if (username == null) {
+            return;
+        }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-				Map<String,String> labels = new HashMap<String,String>();
-				labels.put("component", "elasticsearch");
-				exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
-			}
-		});
-        
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                Map<String, String> labels = new HashMap<String, String>();
+                labels.put("component", "elasticsearch");
+                exchange.getIn()
+                        .setHeader(
+                                KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS,
+                                labels);
+            }
+        });
+
         List<PersistentVolume> result = ex.getOut().getBody(List.class);
     }
-    
-	@Override
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {            
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumes&operation=listPersistentVolumes",host,username,password);
+                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumes&operation=listPersistentVolumes",
+                                host, username, password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumes&operation=listPersistentVolumesByLabels",host,username,password);
-            } 
+                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumes&operation=listPersistentVolumesByLabels",
+                                host, username, password);
+            }
         };
     }
 }
