@@ -71,4 +71,11 @@ public interface KubernetesOperations {
     String GET_RESOURCE_QUOTA_OPERATION = "getResourceQuota";
     String CREATE_RESOURCE_QUOTA_OPERATION = "createResourceQuota";
     String DELETE_RESOURCE_QUOTA_OPERATION = "deleteResourceQuota";
+    
+    // Service Accounts
+    String LIST_SERVICE_ACCOUNTS = "listServiceAccounts";
+    String LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION = "listServiceAccountsByLabels";
+    String GET_SERVICE_ACCOUNT_OPERATION = "getServiceAccount";
+    String CREATE_SERVICE_ACCOUNT_OPERATION = "createServiceAccount";
+    String DELETE_SERVICE_ACCOUNT_OPERATION = "deleteServiceAccount";
 }

@@ -40,4 +40,7 @@ public interface KubernetesConstants {
     String KUBERNETES_RESOURCES_QUOTA_LABELS = "CamelKubernetesResourcesQuotaLabels";
     String KUBERNETES_RESOURCES_QUOTA_NAME = "CamelKubernetesResourcesQuotaName";
     String KUBERNETES_RESOURCE_QUOTA_SPEC = "CamelKubernetesResourceQuotaSpec";
+    String KUBERNETES_SERVICE_ACCOUNTS_LABELS = "CamelKubernetesServiceAccountsLabels";
+    String KUBERNETES_SERVICE_ACCOUNT_NAME = "CamelKubernetesServiceAccountName";
+    String KUBERNETES_SERVICE_ACCOUNT = "CamelKubernetesServiceAccount";
 }

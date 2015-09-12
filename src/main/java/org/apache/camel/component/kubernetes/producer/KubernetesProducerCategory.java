@@ -33,4 +33,6 @@ public interface KubernetesProducerCategory {
     String SECRETS = "secrets";
     
     String RESOURCES_QUOTA = "resourcesQuota";
+    
+    String SERVICE_ACCOUNTS = "serviceAccounts";
 }

@@ -30,6 +30,7 @@ import org.apache.camel.component.kubernetes.producer.KubernetesProducerCategory
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesServiceAccountsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesServicesProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
@@ -83,6 +84,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
                 
             case KubernetesProducerCategory.RESOURCES_QUOTA:
                 return new KubernetesResourcesQuotaProducer(this);
+                
+            case KubernetesProducerCategory.SERVICE_ACCOUNTS:
+                return new KubernetesServiceAccountsProducer(this);
                 
             default:
                 throw new IllegalArgumentException("The " + category
