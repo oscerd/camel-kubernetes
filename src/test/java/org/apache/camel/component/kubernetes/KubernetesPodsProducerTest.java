@@ -103,7 +103,7 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
             }
         }
 
-        assertTrue(podExists);
+        assertFalse(podExists);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
 
         Pod result = ex.getOut().getBody(Pod.class);
 
-        assertEquals(result.getMetadata().getName(), "elasticsearch-7015o");
+        assertNull(result);
     }
 
     @Test

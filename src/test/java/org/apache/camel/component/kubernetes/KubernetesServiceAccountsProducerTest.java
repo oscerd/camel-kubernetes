@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ning.http.util.Base64;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
-import io.fabric8.kubernetes.client.internal.com.ning.http.util.Base64;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

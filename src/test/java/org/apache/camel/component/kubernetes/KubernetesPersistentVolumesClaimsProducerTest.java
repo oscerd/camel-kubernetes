@@ -121,7 +121,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
                 pvcSpec.setResources(rr);
                 pvcSpec.setVolumeName("vol001");
                 List<String> access = new ArrayList<String>();
-                access.add("readwrite");
+                access.add("ReadWriteOnce");
                 pvcSpec.setAccessModes(access);
                 exchange.getIn()
                         .setHeader(

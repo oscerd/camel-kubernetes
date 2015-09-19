@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.ClientLoggableResource;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
 
@@ -104,7 +105,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Get pods by labels require specify a labels set");
         }
-        ClientOperation<KubernetesClient, Pod, PodList, DoneablePod, ClientResource<Pod, DoneablePod>> pods;
+        ClientOperation<KubernetesClient, Pod, PodList, DoneablePod, ClientLoggableResource<Pod, DoneablePod>> pods;
         pods = getEndpoint().getKubernetesClient().pods();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());

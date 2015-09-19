@@ -56,7 +56,7 @@ public class KubernetesPersistentVolumesProducerTest extends CamelTestSupport {
         List<PersistentVolume> result = template.requestBody("direct:list", "",
                 List.class);
 
-        assertTrue(result.size() == 0);
+        assertTrue(result.size() == 1);
     }
 
     @Test

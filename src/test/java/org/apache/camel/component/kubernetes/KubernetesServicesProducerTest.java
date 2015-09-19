@@ -105,7 +105,7 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
             }
         }
 
-        assertTrue(serviceExists);
+        assertFalse(serviceExists);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
 
         Service result = ex.getOut().getBody(Service.class);
 
-        assertEquals(result.getMetadata().getName(), "elasticsearch");
+        assertNull(result);
     }
 
     @Test

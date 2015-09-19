@@ -106,7 +106,7 @@ public class KubernetesReplicationControllersProducerTest extends
             }
         }
 
-        assertTrue(rcExists);
+        assertFalse(rcExists);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class KubernetesReplicationControllersProducerTest extends
         ReplicationController result = ex.getOut().getBody(
                 ReplicationController.class);
 
-        assertEquals(result.getMetadata().getName(), "elasticsearch");
+        assertNull(result);
     }
 
     @Test
