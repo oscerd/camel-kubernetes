@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.Map;
-
 import io.fabric8.kubernetes.api.model.DoneablePod;
 import io.fabric8.kubernetes.api.model.EditablePod;
+import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.ClientLoggableResource;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -138,6 +140,23 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     protected void doCreatePod(Exchange exchange, String operation)
             throws Exception {
+    	
+    	getEndpoint().getKubernetesClient().namespaces().withName("default").watch(new Watcher<Namespace>() {
+
+            @Override
+            public void eventReceived(
+                    io.fabric8.kubernetes.client.Watcher.Action action,
+                    Namespace resource) {
+                System.out.println("action " +  action + " resource "  + resource);
+
+            }
+
+            @Override
+            public void onClose(KubernetesClientException cause) {
+                cause.printStackTrace();
+
+            }});
+    	
         Pod pod = null;
         String podName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_POD_NAME, String.class);
