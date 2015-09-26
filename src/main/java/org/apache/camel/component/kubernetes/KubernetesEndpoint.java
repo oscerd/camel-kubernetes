@@ -22,6 +22,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
@@ -97,7 +98,7 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return null;
+        return new KubernetesPodsConsumer(this, processor);
     }
 
     @Override
