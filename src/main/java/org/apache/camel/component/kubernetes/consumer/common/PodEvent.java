@@ -1,4 +1,4 @@
-package org.apache.camel.component.kubernetes.common;
+package org.apache.camel.component.kubernetes.consumer.common;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.Watcher.Action;

@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes;
+package org.apache.camel.component.kubernetes.producer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.Container;
-import io.fabric8.kubernetes.api.model.ContainerPort;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodSpec;
+import com.ning.http.util.Base64;
+
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.ServiceAccount;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class KubernetesPodsProducerTest extends CamelTestSupport {
+public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
 
     private String username;
     private String password;
@@ -58,19 +58,20 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
         if (username == null) {
             return;
         }
-        List<Pod> result = template.requestBody("direct:list", "", List.class);
+        List<ServiceAccount> result = template.requestBody("direct:list", "",
+                List.class);
 
-        boolean defaultExists = false;
+        boolean fabric8Exists = false;
 
-        Iterator<Pod> it = result.iterator();
+        Iterator<ServiceAccount> it = result.iterator();
         while (it.hasNext()) {
-            Pod pod = (Pod) it.next();
-            if ((pod.getMetadata().getName()).contains("fabric8")) {
-                defaultExists = true;
+            ServiceAccount service = (ServiceAccount) it.next();
+            if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
+                fabric8Exists = true;
             }
         }
 
-        assertTrue(defaultExists);
+        assertTrue(fabric8Exists);
     }
 
     @Test
@@ -88,30 +89,21 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("component", "elasticsearch");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
             }
         });
 
-        List<Pod> result = ex.getOut().getBody(List.class);
+        List<ServiceAccount> result = ex.getOut().getBody(List.class);
 
-        boolean podExists = false;
-        Iterator<Pod> it = result.iterator();
-        while (it.hasNext()) {
-            Pod pod = (Pod) it.next();
-            if (pod.getMetadata().getLabels().containsValue("elasticsearch")) {
-                podExists = true;
-            }
-        }
-
-        assertFalse(podExists);
+        assertTrue(result.size() == 0);
     }
 
     @Test
-    public void getPodTest() throws Exception {
+    public void createAndDeleteServiceAccount() throws Exception {
         if (username == null) {
             return;
         }
-        Exchange ex = template.request("direct:getPod", new Processor() {
+        Exchange ex = template.request("direct:create", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -119,65 +111,30 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_POD_NAME,
-                        "elasticsearch-7015o");
-            }
-        });
-
-        Pod result = ex.getOut().getBody(Pod.class);
-
-        assertNull(result);
-    }
-
-    @Test
-    public void createAndDeletePod() throws Exception {
-        if (username == null) {
-            return;
-        }
-        Exchange ex = template.request("direct:createPod", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_POD_NAME, "test");
+                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
-                PodSpec podSpec = new PodSpec();
-                podSpec.setHost("172.28.128.4");
-                Container cont = new Container();
-                cont.setImage("docker.io/jboss/wildfly:latest");
-                cont.setName("pippo");
+                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
+                ServiceAccount s = new ServiceAccount();
+                s.setKind("ServiceAccount");
+                Map<String, String> mp = new HashMap<String, String>();
+                mp.put("username", Base64.encode("pippo".getBytes()));
+                mp.put("password", Base64.encode("password".getBytes()));
 
-                List<ContainerPort> containerPort = new ArrayList<ContainerPort>();
-                ContainerPort port = new ContainerPort();
-                port.setHostIP("0.0.0.0");
-                port.setHostPort(8080);
-                port.setContainerPort(8080);
-
-                containerPort.add(port);
-
-                cont.setPorts(containerPort);
-
-                List<Container> list = new ArrayList<Container>();
-                list.add(cont);
-
-                podSpec.setContainers(list);
-
+                ObjectMeta meta = new ObjectMeta();
+                meta.setName("test");
+                s.setMetadata(meta);
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
+                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, s);
             }
         });
 
-        Pod pod = ex.getOut().getBody(Pod.class);
+        ServiceAccount sec = ex.getOut().getBody(ServiceAccount.class);
 
-        assertEquals(pod.getMetadata().getName(), "test");
+        assertEquals(sec.getMetadata().getName(), "test");
 
-        ex = template.request("direct:deletePod", new Processor() {
+        ex = template.request("direct:delete", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -185,13 +142,13 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_POD_NAME, "test");
+                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
             }
         });
 
-        boolean podDeleted = ex.getOut().getBody(Boolean.class);
+        boolean secDeleted = ex.getOut().getBody(Boolean.class);
 
-        assertTrue(podDeleted);
+        assertTrue(secDeleted);
     }
 
     @Override
@@ -200,19 +157,19 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPods",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccounts",
                                 host, username, password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPodsByLabels",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
                                 host, username, password);
-                from("direct:getPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=getPod",
+                from("direct:getServices")
+                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=getServiceAccount",
                                 host, username, password);
-                from("direct:createPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=createPod",
+                from("direct:create")
+                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=createServiceAccount",
                                 host, username, password);
-                from("direct:deletePod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",
+                from("direct:delete")
+                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=deleteServiceAccount",
                                 host, username, password);
             }
         };

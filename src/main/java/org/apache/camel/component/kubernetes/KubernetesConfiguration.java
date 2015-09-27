@@ -75,6 +75,9 @@ public class KubernetesConfiguration {
 
     @UriParam
     private Boolean trustCerts;
+    
+    @UriParam(label = "consumer")
+    private String namespaceName;
 
     public String getMasterUrl() {
         return masterUrl;
@@ -212,17 +215,27 @@ public class KubernetesConfiguration {
         this.trustCerts = trustCerts;
     }
 
-    @Override
-    public String toString() {
-        return "KubernetesConfiguration [masterUrl=" + masterUrl
-                + ", username=" + username + ", password=" + password
-                + ", operation=" + operation + ", apiVersion=" + apiVersion
-                + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile
-                + ", clientCertData=" + clientCertData + ", clientCertFile="
-                + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo
-                + ", clientKeyData=" + clientKeyData + ", clientKeyFile="
-                + clientKeyFile + ", clientKeyPassphrase="
-                + clientKeyPassphrase + ", oauthToken=" + oauthToken
-                + ", trustCerts=" + trustCerts + "]";
-    }
+	public String getNamespaceName() {
+		return namespaceName;
+	}
+
+	public void setNamespaceName(String namespaceName) {
+		this.namespaceName = namespaceName;
+	}
+
+	@Override
+	public String toString() {
+		return "KubernetesConfiguration [masterUrl=" + masterUrl
+				+ ", category=" + category + ", kubernetesClient="
+				+ kubernetesClient + ", username=" + username + ", password="
+				+ password + ", operation=" + operation + ", apiVersion="
+				+ apiVersion + ", caCertData=" + caCertData + ", caCertFile="
+				+ caCertFile + ", clientCertData=" + clientCertData
+				+ ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
+				+ clientKeyAlgo + ", clientKeyData=" + clientKeyData
+				+ ", clientKeyFile=" + clientKeyFile + ", clientKeyPassphrase="
+				+ clientKeyPassphrase + ", oauthToken=" + oauthToken
+				+ ", trustCerts=" + trustCerts + ", namespaceName="
+				+ namespaceName + "]";
+	}
 }

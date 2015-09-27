@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.producer;
+package org.apache.camel.component.kubernetes;
 
-public interface KubernetesProducerCategory {
+public interface KubernetesCategory {
 
     String NAMESPACES = "namespaces";
     

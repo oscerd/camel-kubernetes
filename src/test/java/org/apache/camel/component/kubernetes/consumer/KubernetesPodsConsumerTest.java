@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes;
+package org.apache.camel.component.kubernetes.consumer;
 
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerPort;
@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -65,6 +66,7 @@ public class KubernetesPodsConsumerTest extends CamelTestSupport {
         }
         
         mockResultEndpoint.expectedMessageCount(3);
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "DELETED");
         Exchange ex = template.request("direct:createPod", new Processor() {
 
             @Override
@@ -149,9 +151,9 @@ public class KubernetesPodsConsumerTest extends CamelTestSupport {
                 from("direct:deletePod")
                         .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",
                                 host, username, password);
-                fromF("kubernetes://%s?username=%s&password=%s", host, username, password).
-                process(new KubernertesProcessor())
-                .to(mockResultEndpoint);
+                fromF("kubernetes://%s?username=%s&password=%s&category=pods", host, username, password)
+                        .process(new KubernertesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -160,7 +162,7 @@ public class KubernetesPodsConsumerTest extends CamelTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got commit with body: " + in.getBody() + ": " + in.getHeader("action"));
+            log.info("Got event with body: " + in.getBody() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

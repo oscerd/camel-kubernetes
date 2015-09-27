@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes;
+package org.apache.camel.component.kubernetes.producer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.ning.http.util.Base64;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.ServiceAccount;
+import io.fabric8.kubernetes.api.model.IntOrString;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
+public class KubernetesServicesProducerTest extends CamelTestSupport {
 
     private String username;
     private String password;
@@ -56,14 +59,14 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
         if (username == null) {
             return;
         }
-        List<ServiceAccount> result = template.requestBody("direct:list", "",
+        List<Service> result = template.requestBody("direct:list", "",
                 List.class);
 
         boolean fabric8Exists = false;
 
-        Iterator<ServiceAccount> it = result.iterator();
+        Iterator<Service> it = result.iterator();
         while (it.hasNext()) {
-            ServiceAccount service = (ServiceAccount) it.next();
+            Service service = (Service) it.next();
             if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
                 fabric8Exists = true;
             }
@@ -87,21 +90,31 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("component", "elasticsearch");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
+                        KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
             }
         });
 
-        List<ServiceAccount> result = ex.getOut().getBody(List.class);
+        List<Service> result = ex.getOut().getBody(List.class);
 
-        assertTrue(result.size() == 0);
+        boolean serviceExists = false;
+        Iterator<Service> it = result.iterator();
+        while (it.hasNext()) {
+            Service service = (Service) it.next();
+            if ("elasticsearch".equalsIgnoreCase(service.getMetadata()
+                    .getName())) {
+                serviceExists = true;
+            }
+        }
+
+        assertFalse(serviceExists);
     }
 
     @Test
-    public void createAndDeleteServiceAccount() throws Exception {
+    public void getServiceTest() throws Exception {
         if (username == null) {
             return;
         }
-        Exchange ex = template.request("direct:create", new Processor() {
+        Exchange ex = template.request("direct:getServices", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -109,30 +122,56 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
+                        KubernetesConstants.KUBERNETES_SERVICE_NAME,
+                        "elasticsearch");
+            }
+        });
+
+        Service result = ex.getOut().getBody(Service.class);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void createAndDeleteService() throws Exception {
+        if (username == null) {
+            return;
+        }
+        Exchange ex = template.request("direct:createService", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
-                ServiceAccount s = new ServiceAccount();
-                s.setKind("ServiceAccount");
-                Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encode("pippo".getBytes()));
-                mp.put("password", Base64.encode("password".getBytes()));
-
-                ObjectMeta meta = new ObjectMeta();
-                meta.setName("test");
-                s.setMetadata(meta);
+                        KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+                ServiceSpec serviceSpec = new ServiceSpec();
+                List<ServicePort> lsp = new ArrayList<ServicePort>();
+                ServicePort sp = new ServicePort();
+                sp.setPort(8080);
+                sp.setTargetPort(new IntOrString(8080));
+                sp.setProtocol("TCP");
+                lsp.add(sp);
+                serviceSpec.setPorts(lsp);
+                Map<String, String> selectorMap = new HashMap<String, String>();
+                selectorMap.put("containter", "test");
+                serviceSpec.setSelector(selectorMap);
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, s);
+                        KubernetesConstants.KUBERNETES_SERVICE_SPEC,
+                        serviceSpec);
             }
         });
 
-        ServiceAccount sec = ex.getOut().getBody(ServiceAccount.class);
+        Service serv = ex.getOut().getBody(Service.class);
 
-        assertEquals(sec.getMetadata().getName(), "test");
+        assertEquals(serv.getMetadata().getName(), "test");
 
-        ex = template.request("direct:delete", new Processor() {
+        ex = template.request("direct:deleteService", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -140,13 +179,13 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "test");
+                        KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
             }
         });
 
-        boolean secDeleted = ex.getOut().getBody(Boolean.class);
+        boolean servDeleted = ex.getOut().getBody(Boolean.class);
 
-        assertTrue(secDeleted);
+        assertTrue(servDeleted);
     }
 
     @Override
@@ -155,19 +194,19 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccounts",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServices",
                                 host, username, password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServicesByLabels",
                                 host, username, password);
                 from("direct:getServices")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=getServiceAccount",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=getService",
                                 host, username, password);
-                from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=createServiceAccount",
+                from("direct:createService")
+                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=createService",
                                 host, username, password);
-                from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=deleteServiceAccount",
+                from("direct:deleteService")
+                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=deleteService",
                                 host, username, password);
             }
         };

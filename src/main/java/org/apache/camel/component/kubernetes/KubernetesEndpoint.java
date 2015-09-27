@@ -23,11 +23,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
+import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesProducerCategory;
+import org.apache.camel.component.kubernetes.KubernetesCategory;
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
@@ -62,31 +63,31 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             switch (category) {
 
-            case KubernetesProducerCategory.NAMESPACES:
+            case KubernetesCategory.NAMESPACES:
                 return new KubernetesNamespacesProducer(this);
 
-            case KubernetesProducerCategory.SERVICES:
+            case KubernetesCategory.SERVICES:
                 return new KubernetesServicesProducer(this);
 
-            case KubernetesProducerCategory.REPLICATION_CONTROLLERS:
+            case KubernetesCategory.REPLICATION_CONTROLLERS:
                 return new KubernetesReplicationControllersProducer(this);
 
-            case KubernetesProducerCategory.PODS:
+            case KubernetesCategory.PODS:
                 return new KubernetesPodsProducer(this);
 
-            case KubernetesProducerCategory.PERSISTENT_VOLUMES:
+            case KubernetesCategory.PERSISTENT_VOLUMES:
                 return new KubernetesPersistentVolumesProducer(this);
 
-            case KubernetesProducerCategory.PERSISTENT_VOLUMES_CLAIMS:
+            case KubernetesCategory.PERSISTENT_VOLUMES_CLAIMS:
                 return new KubernetesPersistentVolumesClaimsProducer(this);
 
-            case KubernetesProducerCategory.SECRETS:
+            case KubernetesCategory.SECRETS:
                 return new KubernetesSecretsProducer(this);
                 
-            case KubernetesProducerCategory.RESOURCES_QUOTA:
+            case KubernetesCategory.RESOURCES_QUOTA:
                 return new KubernetesResourcesQuotaProducer(this);
                 
-            case KubernetesProducerCategory.SERVICE_ACCOUNTS:
+            case KubernetesCategory.SERVICE_ACCOUNTS:
                 return new KubernetesServiceAccountsProducer(this);
                 
             default:
@@ -98,7 +99,25 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesPodsConsumer(this, processor);
+        if (ObjectHelper.isEmpty(configuration.getCategory())) {
+            throw new IllegalArgumentException(
+                    "A consumer category must be specified");
+        } else {
+            String category = configuration.getCategory();
+
+            switch (category) {
+
+            case KubernetesCategory.PODS:
+                return new KubernetesPodsConsumer(this, processor);
+                
+            case KubernetesCategory.SERVICES:
+                return new KubernetesServicesConsumer(this, processor);
+                
+            default:
+                throw new IllegalArgumentException("The " + category
+                        + " consumer category doesn't exist");
+            }
+        }
     }
 
     @Override

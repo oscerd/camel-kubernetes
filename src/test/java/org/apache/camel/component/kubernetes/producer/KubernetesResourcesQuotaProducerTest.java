@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes;
+package org.apache.camel.component.kubernetes.producer;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ning.http.util.Base64;
-
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.kubernetes.api.model.ResourceQuota;
+import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class KubernetesSecretsProducerTest extends CamelTestSupport {
+public class KubernetesResourcesQuotaProducerTest extends CamelTestSupport {
 
     private String username;
     private String password;
@@ -56,57 +56,14 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
         if (username == null) {
             return;
         }
-        List<Secret> result = template.requestBody("direct:list", "",
+        List<ResourceQuota> result = template.requestBody("direct:list", "",
                 List.class);
 
-        assertTrue(result.size() != 0);
+        assertTrue(result.size() == 0);
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
-        if (username == null) {
-            return;
-        }
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
-            }
-        });
-
-        List<Secret> result = ex.getOut().getBody(List.class);
-    }
-
-    @Test
-    public void getSecretTest() throws Exception {
-        if (username == null) {
-            return;
-        }
-        Exchange ex = template.request("direct:get", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME,
-                        "builder-token-191oc");
-            }
-        });
-
-        Secret result = ex.getOut().getBody(Secret.class);
-    }
-
-    @Test
-    public void createAndDeleteSecret() throws Exception {
+    public void createAndDeleteResourceQuota() throws Exception {
         if (username == null) {
             return;
         }
@@ -118,29 +75,44 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
+                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
+                        "test");
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
-                Secret s = new Secret();
-                s.setKind("Secret");
-                Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encode("pippo".getBytes()));
-                mp.put("password", Base64.encode("password".getBytes()));
-                s.setData(mp);
-
-                ObjectMeta meta = new ObjectMeta();
-                meta.setName("test");
-                s.setMetadata(meta);
+                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
+                        labels);
+                ResourceQuotaSpec rsSpec = new ResourceQuotaSpec();
+                Map<String, Quantity> mp = new HashMap<String, Quantity>();
+                mp.put("pods", new Quantity("100"));
+                rsSpec.setHard(mp);
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET, s);
+                        KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC,
+                        rsSpec);
             }
         });
 
-        Secret sec = ex.getOut().getBody(Secret.class);
+        ResourceQuota rs = ex.getOut().getBody(ResourceQuota.class);
 
-        assertEquals(sec.getMetadata().getName(), "test");
+        assertEquals(rs.getMetadata().getName(), "test");
+        
+        ex = template.request("direct:get", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                        "default");
+                exchange.getIn().setHeader(
+                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
+                        "test");
+            }
+        });
+        
+        ResourceQuota rsGet = ex.getOut().getBody(ResourceQuota.class);
+        
+        assertEquals(rsGet.getMetadata().getName(), "test");
+        assertEquals(rsGet.getSpec().getHard().get("pods"), new Quantity("100"));
 
         ex = template.request("direct:delete", new Processor() {
 
@@ -150,13 +122,14 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
                         KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
                         "default");
                 exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
+                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
+                        "test");
             }
         });
 
-        boolean secDeleted = ex.getOut().getBody(Boolean.class);
+        boolean rqDeleted = ex.getOut().getBody(Boolean.class);
 
-        assertTrue(secDeleted);
+        assertTrue(rqDeleted);
     }
 
     @Override
@@ -165,19 +138,19 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=listSecrets",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=listResourcesQuota",
                                 host, username, password);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=listSecretsByLabels",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=listResourcesQuotaByLabels",
                                 host, username, password);
                 from("direct:get")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=getSecret",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=getResourceQuota",
                                 host, username, password);
                 from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=createSecret",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=createResourceQuota",
                                 host, username, password);
                 from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=deleteSecret",
+                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=deleteResourceQuota",
                                 host, username, password);
             }
         };
