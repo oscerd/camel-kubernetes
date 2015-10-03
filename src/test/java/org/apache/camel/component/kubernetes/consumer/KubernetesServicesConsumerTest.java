@@ -38,8 +38,7 @@ import org.junit.Test;
 
 public class KubernetesServicesConsumerTest extends CamelTestSupport {
 
-	private String username;
-	private String password;
+    private String authToken;
 	private String host;
 	
     @EndpointInject(uri = "mock:result")
@@ -53,15 +52,14 @@ public class KubernetesServicesConsumerTest extends CamelTestSupport {
 	@Override
 	public void setUp() throws Exception {
 		// INSERT credentials and host here
-		username = "admin";
-		password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
 		host = "https://172.28.128.4:8443";
 		super.setUp();
 	}
 
 	@Test
 	public void createAndDeleteService() throws Exception {
-		if (username == null) {
+		if (authToken == null) {
 			return;
 		}
 		
@@ -128,22 +126,22 @@ public class KubernetesServicesConsumerTest extends CamelTestSupport {
 			@Override
 			public void configure() throws Exception {
 				from("direct:list")
-						.toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServices",
-								host, username, password);
+						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices",
+								host, authToken);
 				from("direct:listByLabels")
-						.toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServicesByLabels",
-								host, username, password);
+						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels",
+								host, authToken);
 				from("direct:getServices")
-						.toF("kubernetes://%s?username=%s&password=%s&category=services&operation=getService",
-								host, username, password);
+						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
+								host, authToken);
 				from("direct:createService")
-						.toF("kubernetes://%s?username=%s&password=%s&category=services&operation=createService",
-								host, username, password);
+						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=createService",
+								host, authToken);
                 from("direct:deleteService")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=deleteService",
-                        host, username, password);
-				fromF("kubernetes://%s?username=%s&password=%s&category=services",
-						host, username, password)
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=deleteService",
+                        host, authToken);
+				fromF("kubernetes://%s?oauthToken=%s&category=services",
+						host, authToken)
 						.process(new KubernertesProcessor())
 						.to(mockResultEndpoint);
 			}

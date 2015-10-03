@@ -35,8 +35,7 @@ import org.junit.Test;
 
 public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -47,15 +46,14 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<ServiceAccount> result = template.requestBody("direct:list", "",
@@ -76,7 +74,7 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -100,7 +98,7 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeleteServiceAccount() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {
@@ -157,20 +155,20 @@ public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccounts",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccounts",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
+                                host, authToken);
                 from("direct:getServices")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=getServiceAccount",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=getServiceAccount",
+                                host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=createServiceAccount",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=createServiceAccount",
+                                host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=serviceAccounts&operation=deleteServiceAccount",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=deleteServiceAccount",
+                                host, authToken);
             }
         };
     }

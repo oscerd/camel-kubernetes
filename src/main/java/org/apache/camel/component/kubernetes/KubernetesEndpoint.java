@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 
@@ -128,6 +129,7 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        
         client = configuration.getKubernetesClient() != null ? configuration
                 .getKubernetesClient() : createKubernetesClient();
     }
@@ -170,7 +172,10 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
             builder.withClientCertFile(configuration.getClientCertFile());
         }
-        kubeClient = new DefaultKubernetesClient(builder.build());
+        
+        Config conf = builder.build();
+        
+        kubeClient = new DefaultKubernetesClient(conf);
         return kubeClient;
     }
 }

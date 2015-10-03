@@ -34,8 +34,7 @@ import org.junit.Test;
 
 public class KubernetesSecretsProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -46,15 +45,14 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<Secret> result = template.requestBody("direct:list", "",
@@ -65,7 +63,7 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -87,7 +85,7 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
 
     @Test
     public void getSecretTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:get", new Processor() {
@@ -108,7 +106,7 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeleteSecret() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {
@@ -166,20 +164,20 @@ public class KubernetesSecretsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=listSecrets",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecrets",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=listSecretsByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecretsByLabels",
+                                host, authToken);
                 from("direct:get")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=getSecret",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=getSecret",
+                                host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=createSecret",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=createSecret",
+                                host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=secrets&operation=deleteSecret",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=deleteSecret",
+                                host, authToken);
             }
         };
     }

@@ -36,8 +36,7 @@ import org.junit.Test;
 public class KubernetesReplicationControllersProducerTest extends
         CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -48,15 +47,14 @@ public class KubernetesReplicationControllersProducerTest extends
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<ReplicationController> result = template.requestBody(
@@ -77,7 +75,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -112,7 +110,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void getReplicationControllerTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:getReplicationController",
@@ -138,7 +136,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void createAndDeleteService() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:createReplicationController",
@@ -211,20 +209,20 @@ public class KubernetesReplicationControllersProducerTest extends
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=replicationControllers&operation=listReplicationControllers",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllers",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=replicationControllers&operation=listReplicationControllersByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllersByLabels",
+                                host, authToken);
                 from("direct:getReplicationController")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=replicationControllers&operation=getReplicationController",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=getReplicationController",
+                                host, authToken);
                 from("direct:createReplicationController")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=replicationControllers&operation=createReplicationController",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=createReplicationController",
+                                host, authToken);
                 from("direct:deleteReplicationController")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=replicationControllers&operation=deleteReplicationController",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
+                                host, authToken);
             }
         };
     }

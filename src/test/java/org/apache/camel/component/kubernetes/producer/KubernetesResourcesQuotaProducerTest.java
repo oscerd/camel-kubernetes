@@ -33,8 +33,7 @@ import org.junit.Test;
 
 public class KubernetesResourcesQuotaProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -45,15 +44,14 @@ public class KubernetesResourcesQuotaProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<ResourceQuota> result = template.requestBody("direct:list", "",
@@ -64,7 +62,7 @@ public class KubernetesResourcesQuotaProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeleteResourceQuota() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {
@@ -138,20 +136,20 @@ public class KubernetesResourcesQuotaProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=listResourcesQuota",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuota",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=listResourcesQuotaByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuotaByLabels",
+                                host, authToken);
                 from("direct:get")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=getResourceQuota",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=getResourceQuota",
+                                host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=createResourceQuota",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=createResourceQuota",
+                                host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=resourcesQuota&operation=deleteResourceQuota",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=deleteResourceQuota",
+                                host, authToken);
             }
         };
     }

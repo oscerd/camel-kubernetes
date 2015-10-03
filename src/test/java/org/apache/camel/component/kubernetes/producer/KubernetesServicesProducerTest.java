@@ -36,8 +36,7 @@ import org.junit.Test;
 
 public class KubernetesServicesProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -48,15 +47,14 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<Service> result = template.requestBody("direct:list", "",
@@ -77,7 +75,7 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -111,7 +109,7 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
 
     @Test
     public void getServiceTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:getServices", new Processor() {
@@ -134,7 +132,7 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeleteService() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:createService", new Processor() {
@@ -194,20 +192,20 @@ public class KubernetesServicesProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServices",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=listServicesByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels",
+                                host, authToken);
                 from("direct:getServices")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=getService",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
+                                host, authToken);
                 from("direct:createService")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=createService",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=createService",
+                                host, authToken);
                 from("direct:deleteService")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=services&operation=deleteService",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=deleteService",
+                                host, authToken);
             }
         };
     }

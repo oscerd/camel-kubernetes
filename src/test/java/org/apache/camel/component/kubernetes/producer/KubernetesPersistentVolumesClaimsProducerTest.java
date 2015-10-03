@@ -38,8 +38,7 @@ import org.junit.Test;
 public class KubernetesPersistentVolumesClaimsProducerTest extends
         CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -50,15 +49,14 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+    	authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<PersistentVolumeClaim> result = template.requestBody(
@@ -69,7 +67,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -92,7 +90,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
 
     @Test
     public void createListAndDeletePersistentVolumeClaim() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {
@@ -190,17 +188,17 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaims",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaims",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaimsByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaimsByLabels",
+                                host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumesClaims&operation=createPersistentVolumeClaim",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=createPersistentVolumeClaim",
+                                host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=persistentVolumesClaims&operation=deletePersistentVolumeClaim",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=deletePersistentVolumeClaim",
+                                host, authToken);
             }
         };
     }

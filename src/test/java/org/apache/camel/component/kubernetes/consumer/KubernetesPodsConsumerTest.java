@@ -20,11 +20,16 @@ import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerPort;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodSpec;
+import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.ConfigBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,12 +39,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesPodsConsumerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
     
     @EndpointInject(uri = "mock:result")
@@ -52,16 +57,15 @@ public class KubernetesPodsConsumerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        // INSERT token and host here
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void createAndDeletePod() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         
@@ -137,21 +141,21 @@ public class KubernetesPodsConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPods",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPods",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPodsByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPodsByLabels",
+                                host, authToken);
                 from("direct:getPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=getPod",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=getPod",
+                                host, authToken);
                 from("direct:createPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=createPod",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod",
+                                host, authToken);
                 from("direct:deletePod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",
-                                host, username, password);
-                fromF("kubernetes://%s?username=%s&password=%s&category=pods", host, username, password)
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod",
+                                host, authToken);
+                fromF("kubernetes://%s?oauthToken=%s&category=pods", host, authToken)
                         .process(new KubernertesProcessor())
                         .to(mockResultEndpoint);
             }

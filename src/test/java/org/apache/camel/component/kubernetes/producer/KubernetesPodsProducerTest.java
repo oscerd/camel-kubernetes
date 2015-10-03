@@ -36,8 +36,7 @@ import org.junit.Test;
 
 public class KubernetesPodsProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -48,15 +47,14 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<Pod> result = template.requestBody("direct:list", "", List.class);
@@ -76,7 +74,7 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -109,7 +107,7 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
 
     @Test
     public void getPodTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:getPod", new Processor() {
@@ -132,7 +130,7 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeletePod() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:createPod", new Processor() {
@@ -201,20 +199,20 @@ public class KubernetesPodsProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPods",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPods",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=listPodsByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPodsByLabels",
+                                host, authToken);
                 from("direct:getPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=getPod",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=getPod",
+                                host, authToken);
                 from("direct:createPod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=createPod",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod",
+                                host, authToken);
                 from("direct:deletePod")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=pods&operation=deletePod",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod",
+                                host, authToken);
             }
         };
     }

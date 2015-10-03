@@ -32,8 +32,7 @@ import org.junit.Test;
 
 public class KubernetesNamespacesProducerTest extends CamelTestSupport {
 
-    private String username;
-    private String password;
+    private String authToken;
     private String host;
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
@@ -44,15 +43,14 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        username = "admin";
-        password = "admin";
+        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
         host = "https://172.28.128.4:8443";
         super.setUp();
     }
 
     @Test
     public void listTest() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         List<Namespace> result = template.requestBody("direct:list", "",
@@ -73,7 +71,7 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
 
     @Test
     public void getNamespace() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:getNs", new Processor() {
@@ -94,7 +92,7 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
 
     @Test
     public void createAndDeleteNamespace() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:createNamespace",
@@ -135,7 +133,7 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
 
     @Test
     public void createListByLabelsAndDeleteNamespace() throws Exception {
-        if (username == null) {
+        if (authToken == null) {
             return;
         }
         Exchange ex = template.request("direct:createNamespace",
@@ -206,20 +204,20 @@ public class KubernetesNamespacesProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespaces",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespaces",
+                                host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=listNamespacesByLabels",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespacesByLabels",
+                                host, authToken);
                 from("direct:getNs")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=getNamespace",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=getNamespace",
+                                host, authToken);
                 from("direct:createNamespace")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=createNamespace",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=createNamespace",
+                                host, authToken);
                 from("direct:deleteNamespace")
-                        .toF("kubernetes://%s?username=%s&password=%s&category=namespaces&operation=deleteNamespace",
-                                host, username, password);
+                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=deleteNamespace",
+                                host, authToken);
             }
         };
     }
