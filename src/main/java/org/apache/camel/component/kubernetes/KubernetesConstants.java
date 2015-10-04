@@ -44,6 +44,10 @@ public interface KubernetesConstants {
     String KUBERNETES_SERVICE_ACCOUNTS_LABELS = "CamelKubernetesServiceAccountsLabels";
     String KUBERNETES_SERVICE_ACCOUNT_NAME = "CamelKubernetesServiceAccountName";
     String KUBERNETES_SERVICE_ACCOUNT = "CamelKubernetesServiceAccount";
+    String KUBERNETES_NODES_LABELS = "CamelKubernetesNodesLabels";
+    String KUBERNETES_NODE_NAME = "CamelKubernetesNodeName";
+    String KUBERNETES_BUILDS_LABELS = "CamelKubernetesBuildsLabels";
+    String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
     
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";

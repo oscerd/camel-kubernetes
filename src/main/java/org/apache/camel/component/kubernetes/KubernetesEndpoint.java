@@ -32,6 +32,8 @@ import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolume
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
 import org.apache.camel.component.kubernetes.KubernetesCategory;
+import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesNodesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
@@ -92,6 +94,12 @@ public class KubernetesEndpoint extends DefaultEndpoint {
                 
             case KubernetesCategory.SERVICE_ACCOUNTS:
                 return new KubernetesServiceAccountsProducer(this);
+                
+            case KubernetesCategory.NODES:
+                return new KubernetesNodesProducer(this);
+                
+            case KubernetesCategory.BUILDS:
+                return new KubernetesBuildsProducer(this);
                 
             default:
                 throw new IllegalArgumentException("The " + category

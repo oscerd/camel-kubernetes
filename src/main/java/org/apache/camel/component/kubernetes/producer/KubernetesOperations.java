@@ -78,4 +78,14 @@ public interface KubernetesOperations {
     String GET_SERVICE_ACCOUNT_OPERATION = "getServiceAccount";
     String CREATE_SERVICE_ACCOUNT_OPERATION = "createServiceAccount";
     String DELETE_SERVICE_ACCOUNT_OPERATION = "deleteServiceAccount";
+    
+    // Nodes
+    String LIST_NODES = "listNodes";
+    String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
+    String GET_NODE_OPERATION = "getNode";
+    
+    // Build Configs
+    String LIST_BUILD = "listBuilds";
+    String LIST_BUILD_BY_LABELS_OPERATION = "listBuildsByLabels";
+    String GET_BUILD_OPERATION = "getBuild";
 }

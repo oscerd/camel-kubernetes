@@ -35,4 +35,8 @@ public interface KubernetesCategory {
     String RESOURCES_QUOTA = "resourcesQuota";
     
     String SERVICE_ACCOUNTS = "serviceAccounts";
+    
+    String NODES = "nodes";
+    
+    String BUILDS = "builds";
 }
