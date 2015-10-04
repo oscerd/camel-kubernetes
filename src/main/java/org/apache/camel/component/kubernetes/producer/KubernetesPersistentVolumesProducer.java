@@ -83,7 +83,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         PersistentVolumeList persistentVolumeList = getEndpoint()
-                .getKubernetesClient().persistentVolumes().list();
+                .getKubernetesClient().persistentVolumes().inAnyNamespace().list();
         exchange.getOut().setBody(persistentVolumeList.getItems());
     }
 

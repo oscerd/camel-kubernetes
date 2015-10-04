@@ -48,7 +48,6 @@ public class KubernetesPersistentVolumesProducerTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @Ignore
     @Test
     public void listTest() throws Exception {
         if (authToken == null) {
