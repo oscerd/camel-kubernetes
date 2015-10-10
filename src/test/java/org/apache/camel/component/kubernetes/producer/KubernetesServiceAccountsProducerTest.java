@@ -30,26 +30,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class KubernetesServiceAccountsProducerTest extends CamelTestSupport {
-
-    private String authToken;
-    private String host;
-
-    // The Camel-Kubernetes tests are based on vagrant fabric8-image
-    // https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift
-    // by running the vagrant image you'll have an environment with
-    // Openshift/Kubernetes installed
-
-    @Override
-    public void setUp() throws Exception {
-        // INSERT credentials and host here
-        authToken = "Pg4zPRjTG8fukBGcJpDfqP-1IF9Y2yp0aKp8zgCb6eo";
-        host = "https://172.28.128.4:8443";
-        super.setUp();
-    }
+public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
