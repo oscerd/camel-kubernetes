@@ -48,6 +48,8 @@ public interface KubernetesConstants {
     String KUBERNETES_NODE_NAME = "CamelKubernetesNodeName";
     String KUBERNETES_BUILDS_LABELS = "CamelKubernetesBuildsLabels";
     String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
+    String KUBERNETES_BUILD_CONFIGS_LABELS = "CamelKubernetesBuildConfigsLabels";
+    String KUBERNETES_BUILD_CONFIG_NAME = "CamelKubernetesBuildConfigName";
     
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";

@@ -39,4 +39,6 @@ public interface KubernetesCategory {
     String NODES = "nodes";
     
     String BUILDS = "builds";
+    
+    String BUILD_CONFIGS = "buildConfigs";
 }
