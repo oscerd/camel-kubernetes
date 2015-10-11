@@ -57,6 +57,7 @@ public class KubernetesSecretsConsumer extends ScheduledPollConsumer {
 		super.doStart();
 		map = new ConcurrentHashMap<Long, SecretEvent>();
 		
+		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
 		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
 		getEndpoint().getKubernetesClient().secrets().inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
 				.watch(new Watcher<Secret>() {
@@ -97,6 +98,7 @@ public class KubernetesSecretsConsumer extends ScheduledPollConsumer {
 				}
 			});
 	    }
+		}
 	}
 
 	@Override

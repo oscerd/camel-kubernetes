@@ -51,7 +51,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeletePod() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         

@@ -29,13 +29,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<Namespace> result = template.requestBody("direct:list", "",
@@ -56,7 +57,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void getNamespace() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:getNs", new Processor() {
@@ -77,7 +78,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeleteNamespace() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:createNamespace",
@@ -118,7 +119,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createListByLabelsAndDeleteNamespace() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:createNamespace",

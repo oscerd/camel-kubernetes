@@ -54,47 +54,56 @@ public class KubernetesPodsConsumer extends ScheduledPollConsumer {
 	protected void doStart() throws Exception {
 		super.doStart();
 		map = new ConcurrentHashMap<Long, PodEvent>();
-		
-		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
-		getEndpoint().getKubernetesClient().pods().inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
-				.watch(new Watcher<Pod>() {
 
-					@Override
-					public void eventReceived(
-							io.fabric8.kubernetes.client.Watcher.Action action,
-							Pod resource) {
-						PodEvent pe = new PodEvent(action, resource);
-						map.put(System.currentTimeMillis(), pe);
-					}
+		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration()
+				.getOauthToken())) {
+			if (ObjectHelper.isNotEmpty(getEndpoint()
+					.getKubernetesConfiguration().getNamespaceName())) {
+				getEndpoint()
+						.getKubernetesClient()
+						.pods()
+						.inNamespace(
+								getEndpoint().getKubernetesConfiguration()
+										.getNamespaceName())
+						.watch(new Watcher<Pod>() {
 
-					@Override
-					public void onClose(KubernetesClientException cause) {
-				          if (cause != null) {
-					            LOG.error(cause.getMessage(), cause);
-					      }	
+							@Override
+							public void eventReceived(
+									io.fabric8.kubernetes.client.Watcher.Action action,
+									Pod resource) {
+								PodEvent pe = new PodEvent(action, resource);
+								map.put(System.currentTimeMillis(), pe);
+							}
 
-					}
-				});
-	    } else {
-			getEndpoint().getKubernetesClient().pods()
-			.watch(new Watcher<Pod>() {
+							@Override
+							public void onClose(KubernetesClientException cause) {
+								if (cause != null) {
+									LOG.error(cause.getMessage(), cause);
+								}
 
-				@Override
-				public void eventReceived(
-						io.fabric8.kubernetes.client.Watcher.Action action,
-						Pod resource) {
-					PodEvent pe = new PodEvent(action, resource);
-					map.put(System.currentTimeMillis(), pe);
-				}
+							}
+						});
+			} else {
+				getEndpoint().getKubernetesClient().pods()
+						.watch(new Watcher<Pod>() {
 
-				@Override
-				public void onClose(KubernetesClientException cause) {
-			          if (cause != null) {
-				            LOG.error(cause.getMessage(), cause);
-				      }	
-				}
-			});
-	    }
+							@Override
+							public void eventReceived(
+									io.fabric8.kubernetes.client.Watcher.Action action,
+									Pod resource) {
+								PodEvent pe = new PodEvent(action, resource);
+								map.put(System.currentTimeMillis(), pe);
+							}
+
+							@Override
+							public void onClose(KubernetesClientException cause) {
+								if (cause != null) {
+									LOG.error(cause.getMessage(), cause);
+								}
+							}
+						});
+			}
+		}
 	}
 
 	@Override
@@ -110,8 +119,10 @@ public class KubernetesPodsConsumer extends ScheduledPollConsumer {
 			PodEvent podEvent = (PodEvent) entry.getValue();
 			Exchange e = getEndpoint().createExchange();
 			e.getIn().setBody(podEvent.getPod());
-			e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, podEvent.getAction());
-			e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, entry.getKey());
+			e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION,
+					podEvent.getAction());
+			e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP,
+					entry.getKey());
 			getProcessor().process(e);
 			map.remove(entry.getKey());
 		}

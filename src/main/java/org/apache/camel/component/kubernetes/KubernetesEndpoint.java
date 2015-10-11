@@ -43,10 +43,15 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:localpath", label = "cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(KubernetesEndpoint.class);
+	
     @UriParam
     private KubernetesConfiguration configuration;
 
@@ -165,6 +170,8 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     }
 
     private DefaultKubernetesClient createKubernetesClient() {
+        LOG.debug("Create Kubernetes client with the following Configuration: " + configuration.toString());
+        
         DefaultKubernetesClient kubeClient = new DefaultKubernetesClient();
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());

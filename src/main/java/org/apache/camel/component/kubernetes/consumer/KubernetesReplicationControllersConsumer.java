@@ -57,6 +57,7 @@ public class KubernetesReplicationControllersConsumer extends ScheduledPollConsu
 		super.doStart();
 		map = new ConcurrentHashMap<Long, ReplicationControllerEvent>();
 		
+		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
 		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
 		getEndpoint().getKubernetesClient().replicationControllers().inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
 				.watch(new Watcher<ReplicationController>() {
@@ -101,6 +102,7 @@ public class KubernetesReplicationControllersConsumer extends ScheduledPollConsu
 				}
 			});
 	    }
+		}
 	}
 
 	@Override

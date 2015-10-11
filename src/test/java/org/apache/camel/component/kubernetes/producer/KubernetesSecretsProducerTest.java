@@ -31,13 +31,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<Secret> result = template.requestBody("direct:list", "",
@@ -70,7 +71,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void getSecretTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:get", new Processor() {
@@ -91,7 +92,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeleteSecret() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {

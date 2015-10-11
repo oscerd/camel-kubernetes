@@ -39,6 +39,7 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesReplicationControllersConsumerTest extends
@@ -49,7 +50,7 @@ public class KubernetesReplicationControllersConsumerTest extends
 
 	@Test
 	public void createAndDeleteReplicationController() throws Exception {
-		if (authToken == null) {
+		if (ObjectHelper.isEmpty(authToken)) {
 			return;
 		}
 

@@ -33,13 +33,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<Pod> result = template.requestBody("direct:list", "", List.class);
@@ -59,7 +60,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -92,7 +93,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void getPodTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:getPod", new Processor() {
@@ -115,7 +116,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeletePod() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:createPod", new Processor() {

@@ -55,6 +55,7 @@ public class KubernetesServicesConsumer extends ScheduledPollConsumer {
 		super.doStart();
 		map = new ConcurrentHashMap<Long, ServiceEvent>();
 		
+		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
 		if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
 		getEndpoint().getKubernetesClient().services().inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
 				.watch(new Watcher<Service>() {
@@ -99,6 +100,7 @@ public class KubernetesServicesConsumer extends ScheduledPollConsumer {
 				}
 			});
 	    }
+		}
 	}
 
 	@Override

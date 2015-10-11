@@ -34,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesPersistentVolumesClaimsProducerTest extends
@@ -41,7 +42,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<PersistentVolumeClaim> result = template.requestBody(
@@ -52,7 +53,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -75,7 +76,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
 
     @Test
     public void createListAndDeletePersistentVolumeClaim() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:create", new Processor() {

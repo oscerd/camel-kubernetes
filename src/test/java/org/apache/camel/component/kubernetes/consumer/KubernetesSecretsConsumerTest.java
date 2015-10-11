@@ -31,6 +31,7 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 import com.ning.http.util.Base64;
@@ -42,7 +43,7 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
 
 	@Test
 	public void createAndDeleteSecrets() throws Exception {
-		if (authToken == null) {
+		if (ObjectHelper.isEmpty(authToken)) {
 			return;
 		}
 

@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesReplicationControllersProducerTest extends
@@ -39,7 +40,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<ReplicationController> result = template.requestBody(
@@ -60,7 +61,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -95,7 +96,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void getReplicationControllerTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:getReplicationController",
@@ -121,7 +122,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
     @Test
     public void createAndDeleteService() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:createReplicationController",

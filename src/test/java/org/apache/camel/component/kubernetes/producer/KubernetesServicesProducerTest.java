@@ -33,13 +33,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         List<Service> result = template.requestBody("direct:list", "",
@@ -60,7 +61,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:listByLabels", new Processor() {
@@ -94,7 +95,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void getServiceTest() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:getServices", new Processor() {
@@ -117,7 +118,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeleteService() throws Exception {
-        if (authToken == null) {
+        if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
         Exchange ex = template.request("direct:createService", new Processor() {
