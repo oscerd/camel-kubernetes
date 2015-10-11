@@ -31,8 +31,8 @@ public class KubernetesTestSupport extends CamelTestSupport{
     @Override
     public void setUp() throws Exception {
         // INSERT credentials and host here
-        authToken = "iJg2uG6AzlJAu0cFMKzFTKNhA_BsVqjcHwV8B1M8zXQ";
-        host = "https://172.28.128.4:8443";
+        authToken = "";
+        host = "";
         super.setUp();
     }
 }
