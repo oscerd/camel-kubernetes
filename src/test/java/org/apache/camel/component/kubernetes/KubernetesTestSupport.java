@@ -32,7 +32,7 @@ public class KubernetesTestSupport extends CamelTestSupport{
     public void setUp() throws Exception {
         // INSERT credentials and host here
         authToken = "";
-        host = "";
+        host = "https://172.28.128.4:8443";
         super.setUp();
     }
 }
