@@ -20,14 +20,17 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
+@UriParams
 public class KubernetesConfiguration {
 
-    @UriParam
+    @UriPath
     @Metadata(required = "true")
     private String masterUrl;
 
-    @UriParam(label = "producer")
+    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,builds,buildConfigs")
     @Metadata(required = "true")
     private String category;
 
@@ -40,7 +43,12 @@ public class KubernetesConfiguration {
     @UriParam
     private String password;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,listServices,listServicesByLabels,getService,createService,"
+            + "deleteService,listReplicationControllers,listReplicationControllersByLabels,getReplicationController,createReplicationController,deleteReplicationController,listPods,"
+    		+ "listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,listPersistentVolumesClaimsByLabels,"
+            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,listSecretsByLabels,getSecret,createSecret,deleteSecret,listResourcesQuota," 
+    		+ "listResourcesQuotaByLabels,getResourceQuota,createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,getServiceAccount,createServiceAccount,"
+            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listBuilds,listBuildsByLabels,getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
     private String operation;
 
     @UriParam
@@ -79,6 +87,9 @@ public class KubernetesConfiguration {
     @UriParam(label = "consumer")
     private String namespaceName;
 
+    /**
+     * Kubernetes Master url
+     */
     public String getMasterUrl() {
         return masterUrl;
     }
@@ -87,6 +98,9 @@ public class KubernetesConfiguration {
         this.masterUrl = masterUrl;
     }
 
+    /**
+     * Kubernetes Producer and Consumer category
+     */
     public String getCategory() {
         return category;
     }
@@ -95,6 +109,9 @@ public class KubernetesConfiguration {
         this.category = category;
     }
 
+    /**
+     * Default KubernetesClient to use if provided
+     */
     public DefaultKubernetesClient getKubernetesClient() {
         return kubernetesClient;
     }
@@ -103,6 +120,9 @@ public class KubernetesConfiguration {
         this.kubernetesClient = kubernetesClient;
     }
 
+    /**
+     * Username to connect to Kubernetes
+     */
     public String getUsername() {
         return username;
     }
@@ -111,6 +131,9 @@ public class KubernetesConfiguration {
         this.username = username;
     }
 
+    /**
+     * Password to connect to Kubernetes
+     */
     public String getPassword() {
         return password;
     }
@@ -119,6 +142,9 @@ public class KubernetesConfiguration {
         this.password = password;
     }
 
+    /**
+     * Producer operation to do on Kubernetes
+     */
     public String getOperation() {
         return operation;
     }
@@ -127,6 +153,9 @@ public class KubernetesConfiguration {
         this.operation = operation;
     }
 
+    /**
+     * The Kubernetes API Version to use
+     */
     public String getApiVersion() {
         return apiVersion;
     }
@@ -135,6 +164,9 @@ public class KubernetesConfiguration {
         this.apiVersion = apiVersion;
     }
 
+    /**
+     * The CA Cert Data
+     */
     public String getCaCertData() {
         return caCertData;
     }
@@ -143,6 +175,9 @@ public class KubernetesConfiguration {
         this.caCertData = caCertData;
     }
 
+    /**
+     * The CA Cert File
+     */
     public String getCaCertFile() {
         return caCertFile;
     }
@@ -151,6 +186,9 @@ public class KubernetesConfiguration {
         this.caCertFile = caCertFile;
     }
 
+    /**
+     * The Client Cert Data
+     */
     public String getClientCertData() {
         return clientCertData;
     }
@@ -159,6 +197,9 @@ public class KubernetesConfiguration {
         this.clientCertData = clientCertData;
     }
 
+    /**
+     * The Client Cert File
+     */
     public String getClientCertFile() {
         return clientCertFile;
     }
@@ -167,6 +208,9 @@ public class KubernetesConfiguration {
         this.clientCertFile = clientCertFile;
     }
 
+    /**
+     * The Key Algorithm used by the client
+     */
     public String getClientKeyAlgo() {
         return clientKeyAlgo;
     }
@@ -175,6 +219,9 @@ public class KubernetesConfiguration {
         this.clientKeyAlgo = clientKeyAlgo;
     }
 
+    /**
+     * The Client Key data
+     */
     public String getClientKeyData() {
         return clientKeyData;
     }
@@ -183,6 +230,9 @@ public class KubernetesConfiguration {
         this.clientKeyData = clientKeyData;
     }
 
+    /**
+     * The Client Key file
+     */
     public String getClientKeyFile() {
         return clientKeyFile;
     }
@@ -191,6 +241,9 @@ public class KubernetesConfiguration {
         this.clientKeyFile = clientKeyFile;
     }
 
+    /**
+     * The Client Key Passphrase
+     */
     public String getClientKeyPassphrase() {
         return clientKeyPassphrase;
     }
@@ -199,6 +252,9 @@ public class KubernetesConfiguration {
         this.clientKeyPassphrase = clientKeyPassphrase;
     }
 
+    /**
+     * The Auth Token 
+     */
     public String getOauthToken() {
         return oauthToken;
     }
@@ -207,6 +263,9 @@ public class KubernetesConfiguration {
         this.oauthToken = oauthToken;
     }
 
+    /**
+     * Define if the certs we used are trusted anyway or not
+     */
     public Boolean getTrustCerts() {
         return trustCerts;
     }
@@ -215,6 +274,9 @@ public class KubernetesConfiguration {
         this.trustCerts = trustCerts;
     }
 
+    /**
+     * The namespace name
+     */
 	public String getNamespaceName() {
 		return namespaceName;
 	}

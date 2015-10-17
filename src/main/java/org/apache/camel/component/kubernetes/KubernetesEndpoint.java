@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:localpath", label = "cloud,paas")
+@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
 	private static final Logger LOG = LoggerFactory
@@ -169,6 +169,10 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         return client;
     }
 
+
+    /**
+     * The kubernetes Configuration
+     */
     public KubernetesConfiguration getKubernetesConfiguration() {
         return configuration;
     }
